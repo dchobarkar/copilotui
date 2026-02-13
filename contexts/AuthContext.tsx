@@ -17,7 +17,7 @@ const loadAuth = (): boolean => {
   } catch {
     return false;
   }
-}
+};
 
 const saveAuth = (signedIn: boolean) => {
   if (typeof window === "undefined") return;
@@ -30,7 +30,7 @@ const saveAuth = (signedIn: boolean) => {
   } catch {
     // ignore
   }
-}
+};
 
 type AuthContextValue = {
   isSignedIn: boolean;
@@ -66,10 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
-}
+};

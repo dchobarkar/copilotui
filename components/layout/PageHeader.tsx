@@ -1,9 +1,7 @@
-"use client";
-
 import { PanelLeft } from "lucide-react";
 
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useSidebar } from "@/contexts/SidebarContext";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface PageHeaderProps {
   title: string;
@@ -11,7 +9,7 @@ interface PageHeaderProps {
   children?: React.ReactNode;
 }
 
-export const PageHeader = ({ title, children }: PageHeaderProps) => {
+const PageHeader = ({ title, children }: PageHeaderProps) => {
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
 
   return (
@@ -34,4 +32,6 @@ export const PageHeader = ({ title, children }: PageHeaderProps) => {
       <ThemeToggle />
     </header>
   );
-}
+};
+
+export default PageHeader;

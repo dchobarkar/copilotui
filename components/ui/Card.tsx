@@ -1,5 +1,3 @@
-"use client";
-
 interface CardProps {
   children: React.ReactNode;
   className?: string;
@@ -15,11 +13,9 @@ export const Card = ({
   as: Component = "div",
 }: CardProps) => {
   return (
-    <Component className={`${CARD_BASE} ${className}`}>
-      {children}
-    </Component>
+    <Component className={`${CARD_BASE} ${className}`}>{children}</Component>
   );
-}
+};
 
 interface CardButtonProps {
   children: React.ReactNode;
@@ -41,4 +37,4 @@ export const CardButton = ({
       {children}
     </button>
   );
-}
+};

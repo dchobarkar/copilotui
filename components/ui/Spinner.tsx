@@ -1,11 +1,9 @@
-"use client";
-
 interface SpinnerProps {
   size?: "sm" | "md";
   className?: string;
 }
 
-export const Spinner = ({ size = "md", className = "" }: SpinnerProps) => {
+const Spinner = ({ size = "md", className = "" }: SpinnerProps) => {
   const sizeClass = size === "sm" ? "w-6 h-6" : "w-8 h-8";
   return (
     <div
@@ -13,4 +11,6 @@ export const Spinner = ({ size = "md", className = "" }: SpinnerProps) => {
       aria-label="Loading"
     />
   );
-}
+};
+
+export default Spinner;

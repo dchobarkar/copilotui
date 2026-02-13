@@ -1,7 +1,3 @@
-/**
- * Code block language aliases for syntax highlighting
- */
-
 export const LANGUAGE_MAP: Record<string, string> = {
   js: "javascript",
   ts: "typescript",

@@ -5,11 +5,10 @@ import { useEffect } from "react";
 interface ModalProps {
   children: React.ReactNode;
   onClose: () => void;
-  /** Prevent closing when clicking overlay (e.g. during processing) */
   closeOnOverlayClick?: boolean;
 }
 
-export const Modal = ({
+const Modal = ({
   children,
   onClose,
   closeOnOverlayClick = true,
@@ -37,4 +36,6 @@ export const Modal = ({
       </div>
     </div>
   );
-}
+};
+
+export default Modal;

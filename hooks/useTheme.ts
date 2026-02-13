@@ -8,9 +8,9 @@ import type { Theme } from "@/lib/theme";
 const getInitialTheme = (): Theme => {
   if (typeof window === "undefined") return "light";
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
-}
+};
 
-export const useTheme = () => {
+const useTheme = () => {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
@@ -28,4 +28,6 @@ export const useTheme = () => {
   };
 
   return { theme, setTheme };
-}
+};
+
+export default useTheme;

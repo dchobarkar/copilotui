@@ -1,19 +1,15 @@
-"use client";
-
-import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
 
 interface ConfirmDeleteModalProps {
-  /** Modal heading (e.g. "Delete conversation") */
   title: string;
-  /** Body message */
   message: string;
   confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export const ConfirmDeleteModal = ({
+const ConfirmDeleteModal = ({
   title,
   message,
   confirmLabel = "Delete",
@@ -41,4 +37,6 @@ export const ConfirmDeleteModal = ({
       </div>
     </Modal>
   );
-}
+};
+
+export default ConfirmDeleteModal;

@@ -1,5 +1,3 @@
-"use client";
-
 interface SettingsToggleRowProps {
   title: string;
   description?: string;
@@ -10,7 +8,7 @@ interface SettingsToggleRowProps {
 const ROW_BASE =
   "flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors";
 
-export const SettingsToggleRow = ({
+const SettingsToggleRow = ({
   title,
   description,
   checked,
@@ -36,4 +34,6 @@ export const SettingsToggleRow = ({
       />
     </label>
   );
-}
+};
+
+export default SettingsToggleRow;

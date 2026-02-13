@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 
-import { PageHeader } from "@/components/layout/PageHeader";
-import { PageContent } from "@/components/layout/PageContent";
-import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
+import PageHeader from "@/components/layout/PageHeader";
+import PageContent from "@/components/layout/PageContent";
+import PageFooterLinks from "@/components/layout/PageFooterLinks";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { PLANS, type PlanId } from "@/lib/subscription";
 
-const SubscriptionPage = () => {
+const Page = () => {
   const { planId, setPlan } = useSubscription();
   const [upgradingTo, setUpgradingTo] = useState<PlanId | null>(null);
   const [upgradeComplete, setUpgradeComplete] = useState<PlanId | null>(null);
@@ -141,4 +141,4 @@ const SubscriptionPage = () => {
   );
 };
 
-export default SubscriptionPage;
+export default Page;

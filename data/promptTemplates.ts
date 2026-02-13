@@ -1,7 +1,3 @@
-/**
- * Prompt template suggestions for the chat welcome screen
- */
-
 export const PROMPT_TEMPLATES = [
   "Explain how React hooks work",
   "Write an API schema for a todo app",

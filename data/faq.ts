@@ -1,7 +1,3 @@
-/**
- * Help page FAQ items
- */
-
 export const FAQ_ITEMS = [
   {
     q: "How do I start a new conversation?",

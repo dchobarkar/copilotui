@@ -1,7 +1,3 @@
-/**
- * Default settings values
- */
-
 export type SettingsState = {
   improveModel: boolean;
   chatHistory: boolean;

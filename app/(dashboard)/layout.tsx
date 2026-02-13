@@ -8,10 +8,10 @@ import { UserProvider } from "@/contexts/UserContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { Sidebar } from "@/components/chat/Sidebar";
-import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
-import { Spinner } from "@/components/ui/Spinner";
+import useIsMobile from "@/hooks/useIsMobile";
+import Sidebar from "@/components/chat/Sidebar";
+import ConfirmDeleteModal from "@/components/ui/ConfirmDeleteModal";
+import Spinner from "@/components/ui/Spinner";
 
 const DashboardLayoutInner = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -94,13 +94,9 @@ const DashboardLayoutInner = ({ children }: { children: React.ReactNode }) => {
       )}
     </div>
   );
-}
+};
 
-const DashboardLayout = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <UserProvider>
       <SubscriptionProvider>

@@ -1,7 +1,3 @@
-/**
- * Application-wide constants (storage keys, etc.)
- */
-
 export const STORAGE_KEYS = {
   conversations: "copilotui-conversations",
   subscription: "copilotui-subscription",

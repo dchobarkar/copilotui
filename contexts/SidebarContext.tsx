@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 
-import { useIsMobile } from "@/hooks/useIsMobile";
+import useIsMobile from "@/hooks/useIsMobile";
 
 interface SidebarContextValue {
   isOpen: boolean;
@@ -12,7 +12,11 @@ interface SidebarContextValue {
 
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
-export const SidebarProvider = ({ children }: { children: React.ReactNode }) => {
+export const SidebarProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(true);
 
@@ -32,10 +36,10 @@ export const SidebarProvider = ({ children }: { children: React.ReactNode }) => 
       {children}
     </SidebarContext.Provider>
   );
-}
+};
 
 export const useSidebar = () => {
   const ctx = useContext(SidebarContext);
   if (!ctx) throw new Error("useSidebar must be used within SidebarProvider");
   return ctx;
-}
+};

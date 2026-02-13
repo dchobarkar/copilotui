@@ -1,7 +1,3 @@
-/**
- * Subscription plans data
- */
-
 export type PlanId = "free" | "pro" | "team";
 
 export type Plan = {

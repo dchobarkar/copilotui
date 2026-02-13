@@ -1,5 +1,3 @@
-"use client";
-
 import { ChevronDown } from "lucide-react";
 
 interface AccordionItemProps {
@@ -9,7 +7,7 @@ interface AccordionItemProps {
   onToggle: () => void;
 }
 
-export const AccordionItem = ({
+const AccordionItem = ({
   question,
   answer,
   isOpen,
@@ -44,4 +42,6 @@ export const AccordionItem = ({
       </div>
     </div>
   );
-}
+};
+
+export default AccordionItem;

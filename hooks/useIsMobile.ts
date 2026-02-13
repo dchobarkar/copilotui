@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { MOBILE_BREAKPOINT } from "@/data/breakpoints";
 
-export const useIsMobile = () => {
+const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -15,4 +16,6 @@ export const useIsMobile = () => {
   }, []);
 
   return isMobile;
-}
+};
+
+export default useIsMobile;

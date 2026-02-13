@@ -10,12 +10,12 @@ import { THINKING_DELAY_MS, STREAM_SPEED_MS } from "@/data/chat";
 import { getMockResponse } from "@/lib/mockResponses";
 import { streamText } from "@/lib/streamText";
 import { ChatBubble } from "@/components/chat/ChatBubble";
-import { TypingIndicator } from "@/components/ui/TypingIndicator";
-import { PromptInput } from "@/components/chat/PromptInput";
-import { PromptTemplates } from "@/components/chat/PromptTemplates";
-import { PageHeader } from "@/components/layout/PageHeader";
+import TypingIndicator from "@/components/ui/TypingIndicator";
+import PromptInput from "@/components/chat/PromptInput";
+import PromptTemplates from "@/components/chat/PromptTemplates";
+import PageHeader from "@/components/layout/PageHeader";
 
-const ChatIdPage = () => {
+const Page = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -31,6 +31,7 @@ const ChatIdPage = () => {
     removeMessagesAfter,
     renameConversation,
   } = useChatContext();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { setOpen: setSidebarOpen } = useSidebar();
   const { user } = useUser();
 
@@ -42,7 +43,9 @@ const ChatIdPage = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const promptInputRef = useRef<{ addFiles: (files: FileList | File[]) => void }>(null);
+  const promptInputRef = useRef<{
+    addFiles: (files: FileList | File[]) => void;
+  }>(null);
 
   // Sync URL id with chat context
   useEffect(() => {
@@ -58,6 +61,7 @@ const ChatIdPage = () => {
     prevConvIdForClearRef.current = convId;
     if (prev != null && convId != null && prev !== convId) {
       streamAbortRef.current?.();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStreamingMessageId(null);
       setStreamingContent("");
       streamAbortRef.current = null;
@@ -215,7 +219,9 @@ const ChatIdPage = () => {
       if (!prevUser) return;
       removeMessage(messageId, convId);
       streamAbortRef.current?.();
-      const prompt = prevUser.content.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
+      const prompt = prevUser.content
+        .replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "")
+        .trim();
       const mockResponse = getMockResponse(prompt || "What can you help with?");
       const tempId = `stream-${Date.now()}`;
       setStreamingMessageId(tempId);
@@ -238,7 +244,13 @@ const ChatIdPage = () => {
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
     },
-    [convId, currentConversation, streamingMessageId, removeMessage, addMessage],
+    [
+      convId,
+      currentConversation,
+      streamingMessageId,
+      removeMessage,
+      addMessage,
+    ],
   );
 
   const handleDeleteMessage = useCallback(
@@ -262,7 +274,9 @@ const ChatIdPage = () => {
       if (!convId || !currentConversation || streamingMessageId) return;
       updateMessage(messageId, newContent, convId);
       removeMessagesAfter(messageId, convId);
-      const prompt = newContent.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
+      const prompt = newContent
+        .replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "")
+        .trim();
       const mockResponse = getMockResponse(prompt || "What can you help with?");
       const tempId = `stream-${Date.now()}`;
       setStreamingMessageId(tempId);
@@ -286,7 +300,14 @@ const ChatIdPage = () => {
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
     },
-    [convId, currentConversation, streamingMessageId, updateMessage, removeMessagesAfter, addMessage],
+    [
+      convId,
+      currentConversation,
+      streamingMessageId,
+      updateMessage,
+      removeMessagesAfter,
+      addMessage,
+    ],
   );
 
   const handleStopGeneration = useCallback(() => {
@@ -336,36 +357,33 @@ const ChatIdPage = () => {
 
   return (
     <>
-      <PageHeader
-        title={displayTitle}
-        children={
-          isEditingTitle && convId ? (
-            <input
-              type="text"
-              value={editTitleValue}
-              onChange={(e) => setEditTitleValue(e.target.value)}
-              onBlur={handleTitleEditSubmit}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleTitleEditSubmit();
-                if (e.key === "Escape") {
-                  setEditTitleValue(displayTitle);
-                  setIsEditingTitle(false);
-                }
-              }}
-              className="w-full bg-transparent border-b border-violet-500/50 text-sm font-medium text-stone-700 dark:text-slate-300 focus:outline-none py-0.5"
-              autoFocus
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={handleTitleEditStart}
-              className="text-left w-full truncate text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-stone-900 dark:hover:text-slate-100 transition-colors"
-            >
-              {displayTitle}
-            </button>
-          )
-        }
-      />
+      <PageHeader title={displayTitle}>
+        {isEditingTitle && convId ? (
+          <input
+            type="text"
+            value={editTitleValue}
+            onChange={(e) => setEditTitleValue(e.target.value)}
+            onBlur={handleTitleEditSubmit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleTitleEditSubmit();
+              if (e.key === "Escape") {
+                setEditTitleValue(displayTitle);
+                setIsEditingTitle(false);
+              }
+            }}
+            className="w-full bg-transparent border-b border-violet-500/50 text-sm font-medium text-stone-700 dark:text-slate-300 focus:outline-none py-0.5"
+            autoFocus
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={handleTitleEditStart}
+            className="text-left w-full truncate text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-stone-900 dark:hover:text-slate-100 transition-colors"
+          >
+            {displayTitle}
+          </button>
+        )}
+      </PageHeader>
 
       <div className="flex-1 min-h-0 min-w-0 relative">
         <div
@@ -373,56 +391,56 @@ const ChatIdPage = () => {
           className="h-full min-h-0 overflow-y-auto overflow-x-hidden"
         >
           <div className="max-w-3xl mx-auto py-6 px-4 sm:px-6 min-w-0 w-full">
-          {displayMessages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
-              <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">
-                {user.name
-                  ? `Hi ${user.name.split(" ")[0]}, what can I help you with?`
-                  : "What can I help you with?"}
-              </p>
-              <p className="text-stone-500 dark:text-slate-500 text-sm mb-4">
-                Start a conversation or try a prompt:
-              </p>
-              <PromptTemplates onSelect={handleSend} />
-              <p className="mt-6 text-xs text-stone-400 dark:text-slate-500">
-                Simulated responses · Concept demo
-              </p>
-            </div>
-          ) : (
-            <>
-              {displayMessages.map((msg) => (
-                <ChatBubble
-                  key={msg.id}
-                  message={msg}
-                  isStreaming={
-                    msg.id === streamingMessageId && msg.role === "assistant"
-                  }
-                  streamingContent={
-                    msg.id === streamingMessageId ? streamingContent : undefined
-                  }
-                  onRegenerate={
-                    msg.role === "assistant" ? handleRegenerate : undefined
-                  }
-                  onDelete={handleDeleteMessage}
-                  onEdit={
-                    msg.role === "user" ? handleEditMessage : undefined
-                  }
-                  onEditAndRegenerate={
-                    msg.role === "user" ? handleEditAndRegenerate : undefined
-                  }
-                />
-              ))}
-              {streamingMessageId && !streamingContent && (
-                <div className="flex gap-3 px-4 py-3 animate-fade-in">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center" />
-                  <div className="flex items-center">
-                    <TypingIndicator />
+            {displayMessages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
+                <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">
+                  {user.name
+                    ? `Hi ${user.name.split(" ")[0]}, what can I help you with?`
+                    : "What can I help you with?"}
+                </p>
+                <p className="text-stone-500 dark:text-slate-500 text-sm mb-4">
+                  Start a conversation or try a prompt:
+                </p>
+                <PromptTemplates onSelect={handleSend} />
+                <p className="mt-6 text-xs text-stone-400 dark:text-slate-500">
+                  Simulated responses · Concept demo
+                </p>
+              </div>
+            ) : (
+              <>
+                {displayMessages.map((msg) => (
+                  <ChatBubble
+                    key={msg.id}
+                    message={msg}
+                    isStreaming={
+                      msg.id === streamingMessageId && msg.role === "assistant"
+                    }
+                    streamingContent={
+                      msg.id === streamingMessageId
+                        ? streamingContent
+                        : undefined
+                    }
+                    onRegenerate={
+                      msg.role === "assistant" ? handleRegenerate : undefined
+                    }
+                    onDelete={handleDeleteMessage}
+                    onEdit={msg.role === "user" ? handleEditMessage : undefined}
+                    onEditAndRegenerate={
+                      msg.role === "user" ? handleEditAndRegenerate : undefined
+                    }
+                  />
+                ))}
+                {streamingMessageId && !streamingContent && (
+                  <div className="flex gap-3 px-4 py-3 animate-fade-in">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center" />
+                    <div className="flex items-center">
+                      <TypingIndicator />
+                    </div>
                   </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </>
-          )}
+                )}
+                <div ref={messagesEndRef} />
+              </>
+            )}
           </div>
         </div>
         {showScrollToBottom && (
@@ -475,4 +493,4 @@ const ChatIdPage = () => {
   );
 };
 
-export default ChatIdPage;
+export default Page;

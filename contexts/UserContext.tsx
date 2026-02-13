@@ -33,7 +33,7 @@ const loadUser = (): UserState => {
     // ignore
   }
   return { name: mockUser.name, email: mockUser.email };
-}
+};
 
 const saveUser = (user: UserState) => {
   if (typeof window === "undefined") return;
@@ -42,7 +42,7 @@ const saveUser = (user: UserState) => {
   } catch {
     // ignore
   }
-}
+};
 
 type UserContextValue = {
   user: UserState;
@@ -75,10 +75,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </UserContext.Provider>
   );
-}
+};
 
 export const useUser = () => {
   const ctx = useContext(UserContext);
   if (!ctx) throw new Error("useUser must be used within UserProvider");
   return ctx;
-}
+};

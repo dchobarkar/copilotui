@@ -3,6 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
+import PageHeader from "@/components/layout/PageHeader";
+import PageContent from "@/components/layout/PageContent";
+import PageFooterLinks from "@/components/layout/PageFooterLinks";
+import { CardButton } from "@/components/ui/Card";
+import SettingsToggleRow from "@/components/ui/SettingsToggleRow";
+import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import Spinner from "@/components/ui/Spinner";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,17 +23,8 @@ import {
   DEFAULT_SETTINGS,
   type SettingsState,
 } from "@/lib/settings";
-import { PageHeader } from "@/components/layout/PageHeader";
-import { PageContent } from "@/components/layout/PageContent";
-import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
-import { CardButton } from "@/components/ui/Card";
-import { SettingsToggleRow } from "@/components/ui/SettingsToggleRow";
-import { Button } from "@/components/ui/Button";
-import { Modal } from "@/components/ui/Modal";
-import { Spinner } from "@/components/ui/Spinner";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-const SettingsPage = () => {
+const Page = () => {
   const router = useRouter();
   const { clearAllConversations } = useChatContext();
   const { user } = useUser();
@@ -154,168 +154,168 @@ const SettingsPage = () => {
               Appearance
             </h2>
             <div className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
-                <div>
-                  <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                    Theme
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                    Light or dark mode
-                  </p>
-                </div>
-                <ThemeToggle />
+              <div>
+                <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                  Theme
+                </p>
+                <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                  Light or dark mode
+                </p>
               </div>
-            </section>
+              <ThemeToggle />
+            </div>
+          </section>
 
-            {/* Privacy & Cookies */}
-            <section>
-              <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
-                Privacy & Cookies
-              </h2>
-              <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
-                Manage cookie preferences. Essential cookies are required for
-                the app to function.
-              </p>
-              <div className="space-y-2">
-                <SettingsToggleRow
-                  title="Essential cookies"
-                  description="Required for sign-in, preferences, and core features"
-                  checked={draft.cookieEssential}
-                  onChange={(v) => setDraft((d) => ({ ...d, cookieEssential: v }))}
-                />
-                <SettingsToggleRow
-                  title="Analytics cookies"
-                  description="Help us understand how the product is used"
-                  checked={draft.cookieAnalytics}
-                  onChange={(v) => setDraft((d) => ({ ...d, cookieAnalytics: v }))}
-                />
-                <SettingsToggleRow
-                  title="Personalization cookies"
-                  description="Customize your experience and suggestions"
-                  checked={draft.cookiePersonalization}
-                  onChange={(v) =>
-                    setDraft((d) => ({ ...d, cookiePersonalization: v }))
-                  }
-                />
-              </div>
-            </section>
+          {/* Privacy & Cookies */}
+          <section>
+            <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
+              Privacy & Cookies
+            </h2>
+            <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
+              Manage cookie preferences. Essential cookies are required for the
+              app to function.
+            </p>
+            <div className="space-y-2">
+              <SettingsToggleRow
+                title="Essential cookies"
+                description="Required for sign-in, preferences, and core features"
+                checked={draft.cookieEssential}
+                onChange={(v) =>
+                  setDraft((d) => ({ ...d, cookieEssential: v }))
+                }
+              />
+              <SettingsToggleRow
+                title="Analytics cookies"
+                description="Help us understand how the product is used"
+                checked={draft.cookieAnalytics}
+                onChange={(v) =>
+                  setDraft((d) => ({ ...d, cookieAnalytics: v }))
+                }
+              />
+              <SettingsToggleRow
+                title="Personalization cookies"
+                description="Customize your experience and suggestions"
+                checked={draft.cookiePersonalization}
+                onChange={(v) =>
+                  setDraft((d) => ({ ...d, cookiePersonalization: v }))
+                }
+              />
+            </div>
+          </section>
 
-            {/* Notifications */}
-            <section>
-              <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
-                Notifications
-              </h2>
-              <div className="space-y-2">
-                <SettingsToggleRow
-                  title="Email notifications"
-                  checked={draft.emailNotifs}
-                  onChange={(v) => setDraft((d) => ({ ...d, emailNotifs: v }))}
-                />
-                <SettingsToggleRow
-                  title="Push notifications"
-                  checked={draft.pushNotifs}
-                  onChange={(v) => setDraft((d) => ({ ...d, pushNotifs: v }))}
-                />
-              </div>
-            </section>
+          {/* Notifications */}
+          <section>
+            <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
+              Notifications
+            </h2>
+            <div className="space-y-2">
+              <SettingsToggleRow
+                title="Email notifications"
+                checked={draft.emailNotifs}
+                onChange={(v) => setDraft((d) => ({ ...d, emailNotifs: v }))}
+              />
+              <SettingsToggleRow
+                title="Push notifications"
+                checked={draft.pushNotifs}
+                onChange={(v) => setDraft((d) => ({ ...d, pushNotifs: v }))}
+              />
+            </div>
+          </section>
 
-            {/* Data Controls */}
-            <section>
-              <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
-                Data Controls
-              </h2>
-              <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
-                Manage how your data is used and stored.
-              </p>
-              <div className="space-y-2">
-                <SettingsToggleRow
-                  title="Improve the model for everyone"
-                  description="Allow your conversations to be used for model improvement"
-                  checked={draft.improveModel}
-                  onChange={(v) => setDraft((d) => ({ ...d, improveModel: v }))}
-                />
-                <SettingsToggleRow
-                  title="Chat history"
-                  description="Save new conversations to your history"
-                  checked={draft.chatHistory}
-                  onChange={(v) => setDraft((d) => ({ ...d, chatHistory: v }))}
-                />
-                <div className="p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
-                  <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
-                    Export data
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
-                    Download your conversation history and account data
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleExport}
-                    disabled={exporting}
-                  >
-                    {exporting ? "Preparing…" : "Export"}
-                  </Button>
-                </div>
-                <div className="p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
-                  <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
-                    Clear chat history
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
-                    Permanently delete all your conversations. This cannot be
-                    undone.
-                  </p>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    onClick={() => setShowClearConfirm(true)}
-                  >
-                    Clear history
-                  </Button>
-                </div>
-              </div>
-            </section>
-
-            {/* Save / Discard */}
-            {isDirty && (
-              <section className="flex gap-2">
-                <Button onClick={handleSave}>Save changes</Button>
-                <Button variant="secondary" onClick={handleDiscard}>
-                  Discard
-                </Button>
-              </section>
-            )}
-
-            {/* Danger zone */}
-            <section>
-              <h2 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-3">
-                Danger zone
-              </h2>
-              <div className="p-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20">
+          {/* Data Controls */}
+          <section>
+            <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
+              Data Controls
+            </h2>
+            <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
+              Manage how your data is used and stored.
+            </p>
+            <div className="space-y-2">
+              <SettingsToggleRow
+                title="Improve the model for everyone"
+                description="Allow your conversations to be used for model improvement"
+                checked={draft.improveModel}
+                onChange={(v) => setDraft((d) => ({ ...d, improveModel: v }))}
+              />
+              <SettingsToggleRow
+                title="Chat history"
+                description="Save new conversations to your history"
+                checked={draft.chatHistory}
+                onChange={(v) => setDraft((d) => ({ ...d, chatHistory: v }))}
+              />
+              <div className="p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
                 <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
-                  Delete account
+                  Export data
                 </p>
                 <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
-                  Permanently delete your account and all data. This cannot be
+                  Download your conversation history and account data
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExport}
+                  disabled={exporting}
+                >
+                  {exporting ? "Preparing…" : "Export"}
+                </Button>
+              </div>
+              <div className="p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
+                <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
+                  Clear chat history
+                </p>
+                <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
+                  Permanently delete all your conversations. This cannot be
                   undone.
                 </p>
                 <Button
-                  variant="danger"
+                  variant="warning"
                   size="sm"
-                  onClick={handleDeleteStart}
+                  onClick={() => setShowClearConfirm(true)}
                 >
-                  Delete account
+                  Clear history
                 </Button>
               </div>
-            </section>
+            </div>
+          </section>
 
-            <PageFooterLinks
-              links={[
-                { href: "/chat", label: "← Back to chat" },
-                { href: "/help", label: "Help & Support" },
-              ]}
-              className="pt-4"
-            />
-          </div>
-        </PageContent>
+          {/* Save / Discard */}
+          {isDirty && (
+            <section className="flex gap-2">
+              <Button onClick={handleSave}>Save changes</Button>
+              <Button variant="secondary" onClick={handleDiscard}>
+                Discard
+              </Button>
+            </section>
+          )}
+
+          {/* Danger zone */}
+          <section>
+            <h2 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-3">
+              Danger zone
+            </h2>
+            <div className="p-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20">
+              <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
+                Delete account
+              </p>
+              <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
+                Permanently delete your account and all data. This cannot be
+                undone.
+              </p>
+              <Button variant="danger" size="sm" onClick={handleDeleteStart}>
+                Delete account
+              </Button>
+            </div>
+          </section>
+
+          <PageFooterLinks
+            links={[
+              { href: "/chat", label: "← Back to chat" },
+              { href: "/help", label: "Help & Support" },
+            ]}
+            className="pt-4"
+          />
+        </div>
+      </PageContent>
 
       {showClearConfirm && (
         <Modal onClose={() => setShowClearConfirm(false)}>
@@ -327,7 +327,11 @@ const SettingsPage = () => {
             This cannot be undone.
           </p>
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowClearConfirm(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -359,14 +363,18 @@ const SettingsPage = () => {
                 Delete account
               </h3>
               <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-                Are you sure? This will permanently delete your account and
-                all conversation data. This cannot be undone.
+                Are you sure? This will permanently delete your account and all
+                conversation data. This cannot be undone.
               </p>
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={handleDeleteCancel}>
                   Cancel
                 </Button>
-                <Button variant="danger" size="sm" onClick={handleDeleteConfirm}>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={handleDeleteConfirm}
+                >
                   Continue
                 </Button>
               </div>
@@ -420,8 +428,8 @@ const SettingsPage = () => {
                 Account deleted
               </p>
               <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-                Your account has been permanently deleted. You have been
-                signed out.
+                Your account has been permanently deleted. You have been signed
+                out.
               </p>
               <Button
                 onClick={() => {
@@ -441,4 +449,4 @@ const SettingsPage = () => {
   );
 };
 
-export default SettingsPage;
+export default Page;

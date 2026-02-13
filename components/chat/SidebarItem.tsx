@@ -14,7 +14,7 @@ interface SidebarItemProps {
   onToggleFavorite: (id: string) => void;
 }
 
-export const SidebarItem = ({
+const SidebarItem = ({
   id,
   title,
   isActive,
@@ -103,4 +103,6 @@ export const SidebarItem = ({
       )}
     </div>
   );
-}
+};
+
+export default SidebarItem;

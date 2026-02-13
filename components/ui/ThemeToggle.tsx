@@ -1,8 +1,8 @@
 import { Moon, Sun } from "lucide-react";
 
-import { useTheme } from "@/hooks/useTheme";
+import useTheme from "@/hooks/useTheme";
 
-export const ThemeToggle = () => {
+const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
@@ -16,4 +16,6 @@ export const ThemeToggle = () => {
       {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
     </button>
   );
-}
+};
+
+export default ThemeToggle;

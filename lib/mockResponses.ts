@@ -1,9 +1,3 @@
-/**
- * Context-aware mock responses. No LLM—uses keyword matching and prompt
- * extraction to pick relevant, natural-sounding responses. Follows chatbot
- * UX best practices: conversational tone, contextual awareness, clear structure.
- */
-
 import {
   MOCK_RESPONSES,
   PROMPT_SPECIFIC_RESPONSES,
@@ -85,7 +79,7 @@ const detectCategory = (prompt: string): ResponseCategory => {
   }
 
   return "general";
-}
+};
 
 /** Extract main subject/topic from prompt for contextual responses */
 const extractSubject = (prompt: string): string => {
@@ -100,17 +94,17 @@ const extractSubject = (prompt: string): string => {
   const match = cleaned.match(/^[\w\s\-]+/);
   const phrase = match ? match[0].trim() : cleaned.slice(0, 40);
   return phrase || "that";
-}
+};
 
 const truncateForEcho = (text: string, maxLen = 50): string => {
   const trimmed = text.trim();
   if (trimmed.length <= maxLen) return trimmed;
   return trimmed.slice(0, maxLen).trim() + "…";
-}
+};
 
 const withSubject = (template: string, subject: string): string => {
   return template.replace(/\{subject\}/g, subject);
-}
+};
 
 export const getMockResponse = (userPrompt: string): string => {
   const trimmed = userPrompt.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
@@ -139,4 +133,4 @@ export const getMockResponse = (userPrompt: string): string => {
   }
 
   return interpolated;
-}
+};

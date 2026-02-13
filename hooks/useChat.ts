@@ -26,18 +26,21 @@ const loadConversations = (): Conversation[] => {
   } catch {
     return mockConversations;
   }
-}
+};
 
 const saveConversations = (conversations: Conversation[]) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEYS.conversations, JSON.stringify(conversations));
+    localStorage.setItem(
+      STORAGE_KEYS.conversations,
+      JSON.stringify(conversations),
+    );
   } catch {
     // ignore
   }
-}
+};
 
-export const useChat = () => {
+const useChat = () => {
   const [conversations, setConversations] = useState<Conversation[]>(
     () => mockConversations,
   );
@@ -48,6 +51,7 @@ export const useChat = () => {
 
   useEffect(() => {
     const loaded = loadConversations();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConversations(loaded);
   }, []);
 
@@ -114,11 +118,7 @@ export const useChat = () => {
   );
 
   const updateMessage = useCallback(
-    (
-      messageId: string,
-      content: string,
-      conversationId?: string | null,
-    ) => {
+    (messageId: string, content: string, conversationId?: string | null) => {
       const targetId = conversationId ?? activeId;
       if (!targetId) return;
       setConversations((prev) =>
@@ -231,4 +231,6 @@ export const useChat = () => {
     searchQuery,
     setSearchQuery,
   };
-}
+};
+
+export default useChat;

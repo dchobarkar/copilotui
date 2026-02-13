@@ -1,7 +1,3 @@
-/**
- * Word-by-word streaming utility for mock chat responses.
- */
-
 export const streamText = (
   text: string,
   onChunk: (chunk: string) => void,
@@ -20,4 +16,4 @@ export const streamText = (
     i++;
   }, speedMs);
   return () => clearInterval(interval);
-}
+};

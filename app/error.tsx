@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 
 const Error = ({
   error,
@@ -31,9 +32,9 @@ const Error = ({
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button onClick={reset}>Try again</Button>
-          <a href="/">
+          <Link href="/">
             <Button variant="secondary">Return home</Button>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

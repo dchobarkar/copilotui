@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
-import { PageHeader } from "@/components/layout/PageHeader";
-import { PageContent } from "@/components/layout/PageContent";
-import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
-import { AccordionItem } from "@/components/ui/AccordionItem";
+import PageHeader from "@/components/layout/PageHeader";
+import PageContent from "@/components/layout/PageContent";
+import PageFooterLinks from "@/components/layout/PageFooterLinks";
+import AccordionItem from "@/components/ui/AccordionItem";
 import { FAQ_ITEMS } from "@/data/faq";
 
-const HelpPage = () => {
+const Page = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -51,4 +50,4 @@ const HelpPage = () => {
   );
 };
 
-export default HelpPage;
+export default Page;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useChatContext } from "@/contexts/ChatContext";
 
-const ChatPage = () => {
+const Page = () => {
   const router = useRouter();
   const { allConversations } = useChatContext();
 
@@ -17,4 +17,4 @@ const ChatPage = () => {
   return null;
 };
 
-export default ChatPage;
+export default Page;

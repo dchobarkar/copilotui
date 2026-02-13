@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, LogIn } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { STORAGE_KEYS } from "@/data/constants";
 
-const LoggedOutPage = () => {
+const Page = () => {
   const router = useRouter();
   const { signIn, isSignedIn, isLoading } = useAuth();
   const [showProcess, setShowProcess] = useState(true);
@@ -120,4 +120,4 @@ const LoggedOutPage = () => {
   );
 };
 
-export default LoggedOutPage;
+export default Page;

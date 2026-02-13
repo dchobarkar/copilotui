@@ -1,8 +1,9 @@
 import { memo, useState, useCallback } from "react";
+
 import type { Message } from "@/lib/types";
-import { Avatar } from "@/components/ui/Avatar";
-import { MarkdownRenderer } from "./MarkdownRenderer";
-import { MessageActions } from "./MessageActions";
+import Avatar from "@/components/ui/Avatar";
+import MarkdownRenderer from "./MarkdownRenderer";
+import MessageActions from "./MessageActions";
 
 interface ChatBubbleProps {
   message: Message;
@@ -19,7 +20,7 @@ const formatTime = (date: Date) => {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
+};
 
 const ChatBubbleInner = ({
   message,
@@ -137,7 +138,7 @@ const ChatBubbleInner = ({
                       setIsEditing(false);
                     }
                   }}
-                  className="w-full min-h-[200px] min-w-[320px] px-3 py-2 rounded bg-white/10 dark:bg-slate-800/50 border border-white/20 dark:border-slate-600/50 text-sm text-inherit placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 resize-y"
+                  className="w-full min-h-50 min-w-[320px] px-3 py-2 rounded bg-white/10 dark:bg-slate-800/50 border border-white/20 dark:border-slate-600/50 text-sm text-inherit placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 resize-y"
                   placeholder="Edit message..."
                   autoFocus
                 />
@@ -186,9 +187,7 @@ const ChatBubbleInner = ({
               onDislike={handleDislike}
               feedback={feedback}
               onShare={handleShare}
-              onDelete={
-                onDelete ? () => onDelete(message.id) : undefined
-              }
+              onDelete={onDelete ? () => onDelete(message.id) : undefined}
             />
           )}
           {isUser && !isEditing && (
@@ -206,6 +205,6 @@ const ChatBubbleInner = ({
       </div>
     </div>
   );
-}
+};
 
 export const ChatBubble = memo(ChatBubbleInner);

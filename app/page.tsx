@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/contexts/AuthContext";
 
-const HomePage = () => {
+const Page = () => {
   const router = useRouter();
   const { isSignedIn, isLoading } = useAuth();
 
@@ -25,4 +25,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Page;

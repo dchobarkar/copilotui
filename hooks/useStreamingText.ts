@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useCallback } from "react";
 
 type StreamingMode = "character" | "word" | "chunk";
@@ -9,7 +11,7 @@ interface UseStreamingTextOptions {
   speed?: number;
 }
 
-export const useStreamingText = ({
+const useStreamingText = ({
   text,
   onComplete,
   mode = "word",
@@ -60,4 +62,6 @@ export const useStreamingText = ({
   }, []);
 
   return { displayedText, isComplete, start };
-}
+};
+
+export default useStreamingText;

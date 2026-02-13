@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 export interface PageFooterLink {
@@ -16,12 +14,11 @@ const DEFAULT_LINKS: PageFooterLink[] = [
 ];
 
 interface PageFooterLinksProps {
-  /** Links to show. Defaults to chat, settings, profile, subscription, help. */
   links?: PageFooterLink[];
   className?: string;
 }
 
-export const PageFooterLinks = ({
+const PageFooterLinks = ({
   links = DEFAULT_LINKS,
   className = "",
 }: PageFooterLinksProps) => {
@@ -40,4 +37,6 @@ export const PageFooterLinks = ({
       ))}
     </div>
   );
-}
+};
+
+export default PageFooterLinks;

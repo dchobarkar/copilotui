@@ -1,5 +1,3 @@
-"use client";
-
 type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "4xl";
 
 const MAX_WIDTH_CLASS: Record<MaxWidth, string> = {
@@ -17,7 +15,7 @@ interface PageContentProps {
   className?: string;
 }
 
-export const PageContent = ({
+const PageContent = ({
   children,
   maxWidth = "xl",
   className = "",
@@ -31,4 +29,6 @@ export const PageContent = ({
       </div>
     </div>
   );
-}
+};
+
+export default PageContent;

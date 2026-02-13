@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-import { PageHeader } from "@/components/layout/PageHeader";
-import { PageContent } from "@/components/layout/PageContent";
-import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
-import { Button } from "@/components/ui/Button";
+import PageHeader from "@/components/layout/PageHeader";
+import PageContent from "@/components/layout/PageContent";
+import PageFooterLinks from "@/components/layout/PageFooterLinks";
+import Button from "@/components/ui/Button";
 import { useUser } from "@/contexts/UserContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 
-const ProfilePage = () => {
+const Page = () => {
   const { user, updateUser } = useUser();
   const { plan } = useSubscription();
   const [name, setName] = useState(user.name);
@@ -18,6 +18,7 @@ const ProfilePage = () => {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setName(user.name);
     setEmail(user.email);
   }, [user.name, user.email]);
@@ -88,9 +89,7 @@ const ProfilePage = () => {
             />
           </div>
           <div className="flex gap-2">
-            <Button type="submit">
-              {saved ? "Saved!" : "Save changes"}
-            </Button>
+            <Button type="submit">{saved ? "Saved!" : "Save changes"}</Button>
             <Link
               href="/chat"
               className="px-4 py-2 rounded-lg border border-stone-200 dark:border-slate-700 text-stone-700 dark:text-slate-300 text-sm font-medium hover:bg-stone-100 dark:hover:bg-slate-800 transition-colors inline-block"
@@ -113,4 +112,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default Page;

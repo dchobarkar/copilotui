@@ -3,13 +3,22 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User, Settings, HelpCircle, CreditCard, LogOut, ChevronUp, Sparkles } from "lucide-react";
+import {
+  User,
+  Settings,
+  HelpCircle,
+  CreditCard,
+  LogOut,
+  ChevronUp,
+  Sparkles,
+} from "lucide-react";
+
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { STORAGE_KEYS } from "@/data/constants";
 
-export const SidebarUser = () => {
+const SidebarUser = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { plan } = useSubscription();
@@ -37,7 +46,10 @@ export const SidebarUser = () => {
     .slice(0, 2);
 
   return (
-    <div ref={menuRef} className="relative border-t border-stone-200 dark:border-slate-800">
+    <div
+      ref={menuRef}
+      className="relative border-t border-stone-200 dark:border-slate-800"
+    >
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -144,4 +156,6 @@ export const SidebarUser = () => {
       )}
     </div>
   );
-}
+};
+
+export default SidebarUser;

@@ -1,5 +1,5 @@
-export type { Plan, PlanId } from "@/data/subscription";
 export { PLANS, DEFAULT_PLAN } from "@/data/subscription";
+export type { Plan, PlanId } from "@/data/subscription";
 
 import { PLANS, DEFAULT_PLAN } from "@/data/subscription";
 import { STORAGE_KEYS } from "@/data/constants";
@@ -16,7 +16,7 @@ export const loadSubscription = (): PlanId => {
     // ignore
   }
   return DEFAULT_PLAN;
-}
+};
 
 export const saveSubscription = (planId: PlanId) => {
   if (typeof window === "undefined") return;
@@ -25,9 +25,9 @@ export const saveSubscription = (planId: PlanId) => {
   } catch {
     // ignore
   }
-}
+};
 
 export const getPlanById = (id: PlanId) => {
   const plan = PLANS.find((p) => p.id === id);
   return plan ?? PLANS[0];
-}
+};

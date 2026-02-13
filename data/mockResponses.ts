@@ -1,8 +1,3 @@
-/**
- * Mock response data for the chat demo.
- * Used by lib/mockResponses.ts for context-aware response selection.
- */
-
 export type ResponseCategory =
   | "greeting"
   | "help"
@@ -241,7 +236,8 @@ export const PROMPT_SPECIFIC_RESPONSES: Array<{
   responses: string[];
 }> = [
   {
-    pattern: /todo app|todo list|task management|projects.*tasks|tasks.*comments/i,
+    pattern:
+      /todo app|todo list|task management|projects.*tasks|tasks.*comments/i,
     responses: [
       `Here's a suggested REST API schema for your task/todo app:
 

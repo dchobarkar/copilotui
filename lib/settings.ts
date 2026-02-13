@@ -1,5 +1,5 @@
-export type { SettingsState } from "@/data/settings";
 export { DEFAULT_SETTINGS } from "@/data/settings";
+export type { SettingsState } from "@/data/settings";
 
 import { DEFAULT_SETTINGS } from "@/data/settings";
 import { STORAGE_KEYS } from "@/data/constants";
@@ -17,7 +17,7 @@ export const loadSettings = (): SettingsState => {
     // ignore
   }
   return DEFAULT_SETTINGS;
-}
+};
 
 export const saveSettings = (settings: SettingsState) => {
   if (typeof window === "undefined") return;
@@ -26,4 +26,4 @@ export const saveSettings = (settings: SettingsState) => {
   } catch {
     // ignore
   }
-}
+};

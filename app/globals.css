@@ -60,7 +60,6 @@ body {
   animation: scale-in 0.15s ease-out forwards;
 }
 
-/* Code block scroll container - horizontal scroll on mobile */
 .code-block-scroll {
   overflow-x: scroll !important;
   overflow-y: hidden !important;
@@ -72,7 +71,6 @@ body {
   display: block;
 }
 
-/* Pre keeps natural width so parent scrolls */
 pre[class*="language-"] {
   margin: 0;
   padding: 0;

@@ -5,7 +5,7 @@ interface PromptTemplatesProps {
   className?: string;
 }
 
-export const PromptTemplates = ({
+const PromptTemplates = ({
   onSelect,
   className = "",
 }: PromptTemplatesProps) => {
@@ -23,4 +23,6 @@ export const PromptTemplates = ({
       ))}
     </div>
   );
-}
+};
+
+export default PromptTemplates;

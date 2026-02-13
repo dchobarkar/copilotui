@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 import "./globals.css";
 
@@ -37,12 +38,12 @@ const GlobalError = ({
             >
               Try again
             </button>
-            <a
+            <Link
               href="/"
               className="px-4 py-2.5 rounded-lg border border-stone-200 dark:border-slate-700 text-stone-700 dark:text-slate-300 text-sm font-medium hover:bg-stone-100 dark:hover:bg-slate-800 transition-colors text-center"
             >
               Return home
-            </a>
+            </Link>
           </div>
         </div>
       </body>
