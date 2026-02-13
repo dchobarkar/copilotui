@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { SidebarItem } from "./SidebarItem";
+import { SidebarUser } from "./SidebarUser";
 import type { Conversation } from "@/lib/types";
 
 interface SidebarProps {
@@ -151,6 +152,8 @@ export function Sidebar({
             </div>
           )}
         </div>
+
+        <SidebarUser />
       </aside>
     </>
   );
