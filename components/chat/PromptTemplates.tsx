@@ -1,10 +1,11 @@
 const TEMPLATES = [
-  "Summarize this text",
   "Explain how React hooks work",
-  "Generate a dashboard UI layout",
   "Write an API schema for a todo app",
-  "Create a React button component",
+  "Generate a dashboard UI layout",
+  "Explain WebSocket handshake",
   "What's the best approach for state management?",
+  "Summarize this text",
+  "Explain JWT authentication",
 ];
 
 interface PromptTemplatesProps {
