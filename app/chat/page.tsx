@@ -12,6 +12,7 @@ import { TypingIndicator } from "@/components/ui/TypingIndicator";
 import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
 
 const STREAM_SPEED = 25;
 
@@ -56,6 +57,7 @@ export default function ChatPage() {
   useEffect(() => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
+  const [deletePendingId, setDeletePendingId] = useState<string | null>(null);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null,
   );
@@ -138,14 +140,14 @@ export default function ChatPage() {
           if (isMobile) setSidebarOpen(false);
         }}
         onRename={renameConversation}
-        onDelete={deleteConversation}
+        onDelete={(id) => setDeletePendingId(id)}
         onToggleFavorite={toggleFavorite}
         onSearchChange={setSearchQuery}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 relative">
         {/* Top bar - expand button when sidebar is closed */}
         <header className="flex items-center gap-2 px-4 py-3 border-b border-stone-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
           <button
@@ -224,6 +226,20 @@ export default function ChatPage() {
           </div>
         </div>
       </main>
+
+      {deletePendingId && (
+        <ConfirmDeleteModal
+          title={
+            conversations.find((c) => c.id === deletePendingId)?.title ??
+            "Untitled"
+          }
+          onConfirm={() => {
+            if (deletePendingId) deleteConversation(deletePendingId);
+            setDeletePendingId(null);
+          }}
+          onCancel={() => setDeletePendingId(null)}
+        />
+      )}
     </div>
   );
 }
