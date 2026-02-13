@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 
 import { mockConversations } from "@/data/conversations";
+import { generateUUID } from "@/lib/uuid";
 import type { Conversation, Message } from "@/lib/types";
 
 export function useChat() {
@@ -16,7 +17,10 @@ export function useChat() {
   const activeConversation = conversations.find((c) => c.id === activeId);
 
   const startNewChat = useCallback(() => {
-    const newId = `conv-${Date.now()}`;
+    let newId: string;
+    do {
+      newId = generateUUID();
+    } while (conversations.some((c) => c.id === newId));
     const newConversation: Conversation = {
       id: newId,
       title: "New chat",
@@ -28,7 +32,7 @@ export function useChat() {
     setConversations((prev) => [newConversation, ...prev]);
     setActiveId(newId);
     return newId;
-  }, []);
+  }, [conversations]);
 
   const addMessage = useCallback(
     (role: Message["role"], content: string, targetId?: string | null) => {
@@ -36,7 +40,7 @@ export function useChat() {
       if (!id) return;
 
       const newMessage: Message = {
-        id: `msg-${Date.now()}`,
+        id: generateUUID(),
         role,
         content,
         timestamp: new Date(),
@@ -96,6 +100,7 @@ export function useChat() {
 
   return {
     conversations: filteredConversations,
+    allConversations: conversations,
     activeId,
     activeConversation,
     setActiveId,

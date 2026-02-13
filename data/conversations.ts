@@ -2,21 +2,21 @@ import type { Conversation } from "@/lib/types";
 
 export const mockConversations: Conversation[] = [
   {
-    id: "conv-1",
+    id: "698dd98f-87ec-83a8-9d26-3015b92875ba",
     title: "API Schema Design",
     isFavorite: true,
     createdAt: new Date("2025-02-10T09:00:00Z"),
     updatedAt: new Date("2025-02-10T09:15:00Z"),
     messages: [
       {
-        id: "msg-1",
+        id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
         role: "user",
         content:
           "Generate a REST API schema for a task management app with projects, tasks, and comments.",
         timestamp: new Date("2025-02-10T09:00:00Z"),
       },
       {
-        id: "msg-2",
+        id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
         role: "assistant",
         content: `Here's a suggested REST API schema for your task management app:
 
@@ -59,21 +59,21 @@ Would you like me to expand any of these endpoints with request/response example
     ],
   },
   {
-    id: "conv-2",
+    id: "7a9e0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c",
     title: "Dashboard UI Component",
     isFavorite: true,
     createdAt: new Date("2025-02-11T14:30:00Z"),
     updatedAt: new Date("2025-02-11T14:45:00Z"),
     messages: [
       {
-        id: "msg-3",
+        id: "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
         role: "user",
         content:
           "Generate a React dashboard UI component with stats cards and a chart placeholder.",
         timestamp: new Date("2025-02-11T14:30:00Z"),
       },
       {
-        id: "msg-4",
+        id: "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
         role: "assistant",
         content: `Here's a clean dashboard component:
 
@@ -124,20 +124,20 @@ Uses Tailwind for styling. Add your chart library (Recharts, Chart.js) in the pl
     ],
   },
   {
-    id: "conv-3",
+    id: "8b0c1d2e-3f4a-5b6c-7d8e-9f0a1b2c3d4e",
     title: "Summarize Analytics Insights",
     createdAt: new Date("2025-02-12T08:15:00Z"),
     updatedAt: new Date("2025-02-12T08:20:00Z"),
     messages: [
       {
-        id: "msg-5",
+        id: "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
         role: "user",
         content:
           "Our Q4 analytics show: 2.3M visitors, 34% bounce rate, 4.2 min avg session. Top traffic: organic 45%, direct 28%, referral 18%. What are the key insights?",
         timestamp: new Date("2025-02-12T08:15:00Z"),
       },
       {
-        id: "msg-6",
+        id: "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
         role: "assistant",
         content: `## Key Analytics Insights
 
@@ -162,19 +162,19 @@ Would you like a deeper breakdown by device or geography?`,
     ],
   },
   {
-    id: "conv-4",
+    id: "9c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f",
     title: "Explain WebSocket Handshake",
     createdAt: new Date("2025-02-12T10:00:00Z"),
     updatedAt: new Date("2025-02-12T10:00:00Z"),
     messages: [
       {
-        id: "msg-7",
+        id: "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
         role: "user",
         content: "Explain how WebSocket handshake works in simple terms.",
         timestamp: new Date("2025-02-12T10:00:00Z"),
       },
       {
-        id: "msg-8",
+        id: "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
         role: "assistant",
         content: `## WebSocket Handshake Explained
 
