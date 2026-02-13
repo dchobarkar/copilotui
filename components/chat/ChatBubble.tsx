@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState, useCallback } from "react";
 import type { Message } from "@/lib/types";
 import { Avatar } from "@/components/ui/Avatar";
 import { MarkdownRenderer } from "./MarkdownRenderer";
@@ -8,6 +8,7 @@ interface ChatBubbleProps {
   message: Message;
   isStreaming?: boolean;
   streamingContent?: string;
+  onRegenerate?: (messageId: string) => void;
 }
 
 function formatTime(date: Date) {
@@ -21,6 +22,7 @@ function ChatBubbleInner({
   message,
   isStreaming = false,
   streamingContent,
+  onRegenerate,
 }: ChatBubbleProps) {
   const isUser = message.role === "user";
   const content =
@@ -28,9 +30,42 @@ function ChatBubbleInner({
       ? streamingContent
       : message.content;
 
-  const handleCopy = async () => {
+  const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
+
+  const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(content);
-  };
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }, [content]);
+
+  const handleLike = useCallback(() => {
+    setFeedback((prev) => (prev === "like" ? null : "like"));
+  }, []);
+
+  const handleDislike = useCallback(() => {
+    setFeedback((prev) => (prev === "dislike" ? null : "dislike"));
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    const shareData = {
+      title: "CopilotUI",
+      text: content,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        await navigator.clipboard.writeText(content);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }
+    } else {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  }, [content]);
 
   return (
     <div
@@ -64,13 +99,15 @@ function ChatBubbleInner({
               <MarkdownRenderer content={content} />
             </div>
           )}
-          {!isUser && (
+          {!isUser && !isStreaming && (
             <MessageActions
               onCopy={handleCopy}
-              onRegenerate={() => {}}
-              onLike={() => {}}
-              onDislike={() => {}}
-              onShare={() => {}}
+              copied={copied}
+              onRegenerate={onRegenerate ? () => onRegenerate(message.id) : undefined}
+              onLike={handleLike}
+              onDislike={handleDislike}
+              feedback={feedback}
+              onShare={handleShare}
             />
           )}
         </div>

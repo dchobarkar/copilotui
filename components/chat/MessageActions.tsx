@@ -1,22 +1,31 @@
-import { Copy, RefreshCw, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
+import { Copy, Check, RefreshCw, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 
 interface MessageActionsProps {
   onCopy?: () => void;
+  copied?: boolean;
   onRegenerate?: () => void;
   onLike?: () => void;
   onDislike?: () => void;
+  feedback?: "like" | "dislike" | null;
   onShare?: () => void;
   className?: string;
 }
 
 export function MessageActions({
   onCopy,
+  copied = false,
   onRegenerate,
   onLike,
   onDislike,
+  feedback = null,
   onShare,
   className = "",
 }: MessageActionsProps) {
+  const btn =
+    "p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors";
+  const active =
+    "text-violet-600 dark:text-violet-400";
+
   return (
     <div
       className={`flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ${className}`}
@@ -25,17 +34,21 @@ export function MessageActions({
         <button
           type="button"
           onClick={onCopy}
-          className="p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors"
-          title="Copy"
+          className={btn}
+          title={copied ? "Copied!" : "Copy"}
         >
-          <Copy className="w-3.5 h-3.5" />
+          {copied ? (
+            <Check className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+          ) : (
+            <Copy className="w-3.5 h-3.5" />
+          )}
         </button>
       )}
       {onRegenerate && (
         <button
           type="button"
           onClick={onRegenerate}
-          className="p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors"
+          className={btn}
           title="Regenerate"
         >
           <RefreshCw className="w-3.5 h-3.5" />
@@ -45,27 +58,31 @@ export function MessageActions({
         <button
           type="button"
           onClick={onLike}
-          className="p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors"
+          className={btn}
           title="Like"
         >
-          <ThumbsUp className="w-3.5 h-3.5" />
+          <ThumbsUp
+            className={`w-3.5 h-3.5 ${feedback === "like" ? `fill-current ${active}` : ""}`}
+          />
         </button>
       )}
       {onDislike && (
         <button
           type="button"
           onClick={onDislike}
-          className="p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors"
+          className={btn}
           title="Dislike"
         >
-          <ThumbsDown className="w-3.5 h-3.5" />
+          <ThumbsDown
+            className={`w-3.5 h-3.5 ${feedback === "dislike" ? `fill-current ${active}` : ""}`}
+          />
         </button>
       )}
       {onShare && (
         <button
           type="button"
           onClick={onShare}
-          className="p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors"
+          className={btn}
           title="Share"
         >
           <Share2 className="w-3.5 h-3.5" />

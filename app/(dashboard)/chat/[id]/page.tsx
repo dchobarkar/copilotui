@@ -14,8 +14,8 @@ import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-const STREAM_SPEED = 25;
 const THINKING_DELAY_MS = 400;
+const STREAM_SPEED_MS = 35;
 
 function streamText(
   text: string,
@@ -32,7 +32,7 @@ function streamText(
     }
     onChunk(words[i] ?? "");
     i++;
-  }, STREAM_SPEED);
+  }, STREAM_SPEED_MS);
   return () => clearInterval(interval);
 }
 
@@ -47,6 +47,7 @@ export default function ChatIdPage() {
     setActiveId,
     startNewChat,
     addMessage,
+    removeMessage,
   } = useChatContext();
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
   const { user } = useUser();
@@ -95,41 +96,27 @@ export default function ChatIdPage() {
 
   const convId = id === "new" ? null : id;
   const messages = (id === "new" ? null : activeConversation)?.messages ?? [];
-  const displayMessages =
-    streamingMessageId && streamingContent
-      ? [
-          ...messages,
-          {
-            id: streamingMessageId,
-            role: "assistant" as const,
-            content: streamingContent,
-            timestamp: new Date(),
-          },
-        ]
-      : messages;
+  const displayMessages = streamingMessageId
+    ? [
+        ...messages,
+        {
+          id: streamingMessageId,
+          role: "assistant" as const,
+          content: streamingContent,
+          timestamp: new Date(),
+        },
+      ]
+    : messages;
 
-  const scrollToBottom = useCallback((instant = false) => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: instant ? "auto" : "smooth",
-    });
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  const lastScrollRef = useRef(0);
-  const SCROLL_THROTTLE_MS = 80;
-
+  // Scroll only when message count changes or streaming completes—never during streaming (prevents flicker)
   useEffect(() => {
     if (displayMessages.length === 0) return;
-    const isStreaming = !!streamingMessageId;
-    if (isStreaming) {
-      const now = Date.now();
-      if (now - lastScrollRef.current >= SCROLL_THROTTLE_MS) {
-        lastScrollRef.current = now;
-        requestAnimationFrame(() => scrollToBottom(true));
-      }
-    } else {
-      scrollToBottom(false);
-    }
-  }, [displayMessages.length, streamingContent, streamingMessageId, scrollToBottom]);
+    scrollToBottom();
+  }, [displayMessages.length, streamingMessageId, scrollToBottom]);
 
   // Keyboard shortcut: Cmd/Ctrl+Shift+O for new chat
   useEffect(() => {
@@ -168,17 +155,19 @@ export default function ChatIdPage() {
           ? `User attached ${files.length} file(s): ${files.map((f) => f.name).join(", ")}`
           : "What can you help with?");
       const mockResponse = getMockResponse(promptForMock);
-      const tempId = `msg-stream-${Date.now()}`;
+      const tempId = `stream-${Date.now()}`;
       setStreamingMessageId(tempId);
       setStreamingContent("");
 
-      // Show "Thinking…" for a moment before streaming starts
+      // Thinking… then word-by-word streaming (plain text during stream = no flicker)
       setTimeout(() => {
         streamText(
           mockResponse,
           (chunk) => setStreamingContent((prev) => prev + chunk),
           () => {
-            addMessage("assistant", mockResponse, targetId);
+            addMessage("assistant", mockResponse, targetId, {
+              messageId: tempId,
+            });
             setStreamingMessageId(null);
             setStreamingContent("");
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -187,6 +176,41 @@ export default function ChatIdPage() {
       }, THINKING_DELAY_MS);
     },
     [convId, startNewChat, addMessage, router],
+  );
+
+  const handleRegenerate = useCallback(
+    (messageId: string) => {
+      if (!convId || !activeConversation || streamingMessageId) return;
+      const msgs = activeConversation.messages;
+      const idx = msgs.findIndex((m) => m.id === messageId);
+      if (idx < 0 || msgs[idx]?.role !== "assistant") return;
+      const prevUser = msgs
+        .slice(0, idx)
+        .reverse()
+        .find((m) => m.role === "user");
+      if (!prevUser) return;
+      removeMessage(messageId, convId);
+      const prompt = prevUser.content.replace(/\n\n\[Attached:.*\]$/s, "").trim();
+      const mockResponse = getMockResponse(prompt || "What can you help with?");
+      const tempId = `stream-${Date.now()}`;
+      setStreamingMessageId(tempId);
+      setStreamingContent("");
+      setTimeout(() => {
+        streamText(
+          mockResponse,
+          (chunk) => setStreamingContent((prev) => prev + chunk),
+          () => {
+            addMessage("assistant", mockResponse, convId, {
+              messageId: tempId,
+            });
+            setStreamingMessageId(null);
+            setStreamingContent("");
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          },
+        );
+      }, THINKING_DELAY_MS);
+    },
+    [convId, activeConversation, streamingMessageId, removeMessage, addMessage],
   );
 
   return (
@@ -236,6 +260,9 @@ export default function ChatIdPage() {
                   }
                   streamingContent={
                     msg.id === streamingMessageId ? streamingContent : undefined
+                  }
+                  onRegenerate={
+                    msg.role === "assistant" ? handleRegenerate : undefined
                   }
                 />
               ))}

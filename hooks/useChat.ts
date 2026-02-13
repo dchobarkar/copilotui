@@ -35,12 +35,17 @@ export function useChat() {
   }, [conversations]);
 
   const addMessage = useCallback(
-    (role: Message["role"], content: string, targetId?: string | null) => {
+    (
+      role: Message["role"],
+      content: string,
+      targetId?: string | null,
+      options?: { messageId?: string },
+    ) => {
       const id = targetId ?? activeId;
       if (!id) return;
 
       const newMessage: Message = {
-        id: generateUUID(),
+        id: options?.messageId ?? generateUUID(),
         role,
         content,
         timestamp: new Date(),
@@ -63,6 +68,25 @@ export function useChat() {
       );
 
       return newMessage;
+    },
+    [activeId],
+  );
+
+  const removeMessage = useCallback(
+    (messageId: string, conversationId?: string | null) => {
+      const targetId = conversationId ?? activeId;
+      if (!targetId) return;
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === targetId
+            ? {
+                ...c,
+                messages: c.messages.filter((m) => m.id !== messageId),
+                updatedAt: new Date(),
+              }
+            : c,
+        ),
+      );
     },
     [activeId],
   );
@@ -111,6 +135,7 @@ export function useChat() {
     setActiveId,
     startNewChat,
     addMessage,
+    removeMessage,
     deleteConversation,
     renameConversation,
     toggleFavorite,
