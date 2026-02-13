@@ -480,16 +480,18 @@ export default function ChatIdPage() {
             onSubmit={handleSend}
             disabled={!!streamingMessageId}
             placeholder="Message CopilotUI…"
+            endAction={
+              streamingMessageId ? (
+                <button
+                  type="button"
+                  onClick={handleStopGeneration}
+                  className="flex items-center justify-center shrink-0 px-3 py-2 rounded-lg text-xs font-medium bg-red-500/90 hover:bg-red-600 text-white transition-colors"
+                >
+                  Stop generating
+                </button>
+              ) : undefined
+            }
           />
-          {streamingMessageId && (
-            <button
-              type="button"
-              onClick={handleStopGeneration}
-              className="mt-2 mx-auto block px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/90 hover:bg-red-600 text-white transition-colors"
-            >
-              Stop generating
-            </button>
-          )}
           <p className="mt-2 text-center text-xs text-stone-400 dark:text-slate-500">
             Simulated responses · No LLM
           </p>

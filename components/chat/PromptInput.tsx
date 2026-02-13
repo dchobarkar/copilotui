@@ -9,6 +9,8 @@ interface PromptInputProps {
   placeholder?: string;
   showCharacterCount?: boolean;
   maxLength?: number;
+  /** Renders next to the send button (e.g. "Stop generating" during streaming) */
+  endAction?: React.ReactNode;
 }
 
 export interface PromptInputHandle {
@@ -21,6 +23,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   placeholder = "Message CopilotUI…",
   showCharacterCount = false,
   maxLength = 4000,
+  endAction,
 }, ref) {
   const [value, setValue] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -147,6 +150,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           rows={1}
           className="flex-1 resize-none bg-transparent px-4 py-3 text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none text-sm min-h-11 max-h-50"
         />
+        {endAction}
         <button
           type="button"
           onClick={handleSubmit}
