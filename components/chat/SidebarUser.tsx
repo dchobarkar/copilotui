@@ -3,13 +3,15 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User, Settings, HelpCircle, LogOut, ChevronUp } from "lucide-react";
+import { User, Settings, HelpCircle, CreditCard, LogOut, ChevronUp } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 
 export function SidebarUser() {
   const { user } = useUser();
   const { signOut } = useAuth();
+  const { plan } = useSubscription();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -48,6 +50,9 @@ export function SidebarUser() {
           </p>
           <p className="text-xs text-stone-500 dark:text-slate-400 truncate">
             {user.email}
+          </p>
+          <p className="text-xs text-violet-600 dark:text-violet-400 truncate mt-0.5">
+            {plan.name} plan
           </p>
         </div>
         <ChevronUp
@@ -94,6 +99,18 @@ export function SidebarUser() {
           >
             <HelpCircle className="w-4 h-4" />
             Help & Support
+          </Link>
+          <Link
+            href="/subscription"
+            onClick={() => setIsOpen(false)}
+            className={`flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
+              pathname === "/subscription"
+                ? "bg-stone-100 dark:bg-slate-700/50 text-stone-900 dark:text-slate-100"
+                : "text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700/50"
+            }`}
+          >
+            <CreditCard className="w-4 h-4" />
+            Subscription
           </Link>
           <div className="border-t border-stone-200 dark:border-slate-700 my-1" />
           <button

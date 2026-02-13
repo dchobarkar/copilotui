@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { PanelLeft } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { clearAccountData } from "@/lib/account";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   loadSettings,
@@ -23,6 +24,7 @@ export default function SettingsPage() {
   const { clearAllConversations } = useChatContext();
   const { user } = useUser();
   const { signOut } = useAuth();
+  const { plan } = useSubscription();
 
   const [saved, setSaved] = useState<SettingsState>(DEFAULT_SETTINGS);
   const [draft, setDraft] = useState<SettingsState>(DEFAULT_SETTINGS);
@@ -127,9 +129,10 @@ export default function SettingsPage() {
                 Account
               </h2>
               <div className="space-y-2">
-                <Link
-                  href="/profile"
-                  className="block p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors"
+                <button
+                  type="button"
+                  onClick={() => handleNavigate("/profile")}
+                  className="w-full block p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors text-left"
                 >
                   <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
                     Profile
@@ -137,7 +140,19 @@ export default function SettingsPage() {
                   <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
                     Manage your name, email, and avatar
                   </p>
-                </Link>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate("/subscription")}
+                  className="w-full block p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors text-left"
+                >
+                  <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                    Subscription
+                  </p>
+                  <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                    {plan.name} plan · Manage billing and upgrade
+                  </p>
+                </button>
               </div>
             </section>
 
@@ -477,6 +492,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={() => {
                     handleDeleteCancel();
+                    clearAccountData();
                     signOut();
                     router.push("/logged-out");
                   }}

@@ -6,11 +6,13 @@ import Link from "next/link";
 
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useUser } from "@/contexts/UserContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function ProfilePage() {
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
   const { user, updateUser } = useUser();
+  const { plan } = useSubscription();
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [saved, setSaved] = useState(false);
@@ -63,6 +65,9 @@ export default function ProfilePage() {
             <p className="text-sm text-stone-500 dark:text-slate-400">
               {user.email}
             </p>
+            <p className="text-xs text-violet-600 dark:text-violet-400 mt-1">
+              {plan.name} plan
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -111,6 +116,27 @@ export default function ProfilePage() {
               </Link>
             </div>
           </form>
+
+          <div className="mt-8 pt-6 border-t border-stone-200 dark:border-slate-700 flex gap-4">
+            <Link
+              href="/chat"
+              className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+            >
+              ← Back to chat
+            </Link>
+            <Link
+              href="/settings"
+              className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+            >
+              Settings
+            </Link>
+            <Link
+              href="/subscription"
+              className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+            >
+              Subscription
+            </Link>
+          </div>
         </div>
       </div>
     </>

@@ -28,6 +28,14 @@ const FAQ_ITEMS = [
     q: "How do I favorite a conversation?",
     a: "Hover over a conversation in the sidebar and click the star icon to add it to your favorites.",
   },
+  {
+    q: "How do I manage my subscription?",
+    a: "Go to Settings → Account → Subscription, or click your profile in the sidebar and select Subscription. You can upgrade or downgrade your plan at any time.",
+  },
+  {
+    q: "How do I update my profile or settings?",
+    a: "Click your profile in the sidebar to access Profile, Settings, and Subscription. Profile lets you change your name and email (click Save changes to apply). Settings includes appearance, notifications, and data controls—remember to click Save changes when you make edits.",
+  },
 ];
 
 export default function HelpPage() {
@@ -100,12 +108,24 @@ export default function HelpPage() {
             })}
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 pt-6 border-t border-stone-200 dark:border-slate-700 flex flex-wrap gap-4">
             <Link
               href="/chat"
               className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
             >
               ← Back to chat
+            </Link>
+            <Link
+              href="/settings"
+              className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+            >
+              Settings
+            </Link>
+            <Link
+              href="/profile"
+              className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+            >
+              Profile
             </Link>
           </div>
         </div>

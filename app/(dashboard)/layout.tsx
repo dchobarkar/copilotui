@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { ChatProvider, useChatContext } from "@/contexts/ChatContext";
 import { UserProvider } from "@/contexts/UserContext";
+import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -106,11 +107,13 @@ export default function DashboardLayout({
 }) {
   return (
     <UserProvider>
+      <SubscriptionProvider>
       <ChatProvider>
         <SidebarProvider>
           <DashboardLayoutInner>{children}</DashboardLayoutInner>
         </SidebarProvider>
       </ChatProvider>
+      </SubscriptionProvider>
     </UserProvider>
   );
 }
