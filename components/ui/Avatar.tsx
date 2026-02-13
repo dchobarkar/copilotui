@@ -7,7 +7,7 @@ interface AvatarProps {
   className?: string;
 }
 
-export function Avatar({ role, className = "" }: AvatarProps) {
+export const Avatar = ({ role, className = "" }: AvatarProps) => {
   const isUser = role === "user";
 
   return (

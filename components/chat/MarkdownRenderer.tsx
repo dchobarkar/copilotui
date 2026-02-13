@@ -8,10 +8,10 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-export function MarkdownRenderer({
+export const MarkdownRenderer = ({
   content,
   className = "",
-}: MarkdownRendererProps) {
+}: MarkdownRendererProps) => {
   return (
     <div className={`markdown-content min-w-0 max-w-full overflow-x-hidden ${className}`}>
       <ReactMarkdown

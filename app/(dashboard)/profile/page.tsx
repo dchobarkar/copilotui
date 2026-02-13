@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { useUser } from "@/contexts/UserContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 
-export default function ProfilePage() {
+const ProfilePage = () => {
   const { user, updateUser } = useUser();
   const { plan } = useSubscription();
   const [name, setName] = useState(user.name);
@@ -111,4 +111,6 @@ export default function ProfilePage() {
       </PageContent>
     </>
   );
-}
+};
+
+export default ProfilePage;

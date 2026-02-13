@@ -28,7 +28,7 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-export function Sidebar({
+export const Sidebar = ({
   conversations,
   activeId,
   searchQuery,
@@ -40,7 +40,7 @@ export function Sidebar({
   onSearchChange,
   isOpen,
   onToggle,
-}: SidebarProps) {
+}: SidebarProps) => {
   const router = useRouter();
   const favorites = conversations.filter((c) => c.isFavorite);
   const others = conversations.filter((c) => !c.isFavorite);

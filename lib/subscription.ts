@@ -5,7 +5,7 @@ import { PLANS, DEFAULT_PLAN } from "@/data/subscription";
 import { STORAGE_KEYS } from "@/data/constants";
 import type { PlanId } from "@/data/subscription";
 
-export function loadSubscription(): PlanId {
+export const loadSubscription = (): PlanId => {
   if (typeof window === "undefined") return DEFAULT_PLAN;
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.subscription);
@@ -18,7 +18,7 @@ export function loadSubscription(): PlanId {
   return DEFAULT_PLAN;
 }
 
-export function saveSubscription(planId: PlanId) {
+export const saveSubscription = (planId: PlanId) => {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEYS.subscription, planId);
@@ -27,7 +27,7 @@ export function saveSubscription(planId: PlanId) {
   }
 }
 
-export function getPlanById(id: PlanId) {
+export const getPlanById = (id: PlanId) => {
   const plan = PLANS.find((p) => p.id === id);
   return plan ?? PLANS[0];
 }

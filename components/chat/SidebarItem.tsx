@@ -14,7 +14,7 @@ interface SidebarItemProps {
   onToggleFavorite: (id: string) => void;
 }
 
-export function SidebarItem({
+export const SidebarItem = ({
   id,
   title,
   isActive,
@@ -23,7 +23,7 @@ export function SidebarItem({
   onRename,
   onDelete,
   onToggleFavorite,
-}: SidebarItemProps) {
+}: SidebarItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
 

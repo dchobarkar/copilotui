@@ -10,7 +10,7 @@ import {
 
 import { STORAGE_KEYS } from "@/data/constants";
 
-function loadAuth(): boolean {
+const loadAuth = (): boolean => {
   if (typeof window === "undefined") return false;
   try {
     return localStorage.getItem(STORAGE_KEYS.auth) === "true";
@@ -19,7 +19,7 @@ function loadAuth(): boolean {
   }
 }
 
-function saveAuth(signedIn: boolean) {
+const saveAuth = (signedIn: boolean) => {
   if (typeof window === "undefined") return;
   try {
     if (signedIn) {
@@ -41,7 +41,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useAuth() {
+export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;

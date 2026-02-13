@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 import type { Theme } from "@/lib/theme";
 
-function getInitialTheme(): Theme {
+const getInitialTheme = (): Theme => {
   if (typeof window === "undefined") return "light";
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
-export function useTheme() {
+export const useTheme = () => {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {

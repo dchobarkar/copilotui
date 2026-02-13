@@ -9,7 +9,7 @@ import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
 import { AccordionItem } from "@/components/ui/AccordionItem";
 import { FAQ_ITEMS } from "@/data/faq";
 
-export default function HelpPage() {
+const HelpPage = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -49,4 +49,6 @@ export default function HelpPage() {
       </PageContent>
     </>
   );
-}
+};
+
+export default HelpPage;

@@ -5,10 +5,10 @@ interface PromptTemplatesProps {
   className?: string;
 }
 
-export function PromptTemplates({
+export const PromptTemplates = ({
   onSelect,
   className = "",
-}: PromptTemplatesProps) {
+}: PromptTemplatesProps) => {
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {PROMPT_TEMPLATES.map((template) => (

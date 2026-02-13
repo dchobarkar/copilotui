@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { STORAGE_KEYS } from "@/data/constants";
 
-export default function LoggedOutPage() {
+const LoggedOutPage = () => {
   const router = useRouter();
   const { signIn, isSignedIn, isLoading } = useAuth();
   const [showProcess, setShowProcess] = useState(true);
@@ -118,4 +118,6 @@ export default function LoggedOutPage() {
       </main>
     </div>
   );
-}
+};
+
+export default LoggedOutPage;

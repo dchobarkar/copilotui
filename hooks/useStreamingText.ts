@@ -9,12 +9,12 @@ interface UseStreamingTextOptions {
   speed?: number;
 }
 
-export function useStreamingText({
+export const useStreamingText = ({
   text,
   onComplete,
   mode = "word",
   speed = 30,
-}: UseStreamingTextOptions) {
+}: UseStreamingTextOptions) => {
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
 

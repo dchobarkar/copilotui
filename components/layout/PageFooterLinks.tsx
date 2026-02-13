@@ -21,10 +21,10 @@ interface PageFooterLinksProps {
   className?: string;
 }
 
-export function PageFooterLinks({
+export const PageFooterLinks = ({
   links = DEFAULT_LINKS,
   className = "",
-}: PageFooterLinksProps) {
+}: PageFooterLinksProps) => {
   return (
     <div
       className={`pt-6 border-t border-stone-200 dark:border-slate-700 flex flex-wrap gap-4 ${className}`}

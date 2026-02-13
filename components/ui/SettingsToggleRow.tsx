@@ -10,12 +10,12 @@ interface SettingsToggleRowProps {
 const ROW_BASE =
   "flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors";
 
-export function SettingsToggleRow({
+export const SettingsToggleRow = ({
   title,
   description,
   checked,
   onChange,
-}: SettingsToggleRowProps) {
+}: SettingsToggleRowProps) => {
   return (
     <label className={ROW_BASE}>
       <div>

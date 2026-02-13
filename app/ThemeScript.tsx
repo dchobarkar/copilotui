@@ -7,7 +7,7 @@ const themeScript = `
   })();
 `;
 
-export function ThemeScript() {
+export const ThemeScript = () => {
   return (
     <script
       dangerouslySetInnerHTML={{ __html: themeScript }}

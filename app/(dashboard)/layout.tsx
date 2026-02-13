@@ -13,7 +13,7 @@ import { Sidebar } from "@/components/chat/Sidebar";
 import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
 import { Spinner } from "@/components/ui/Spinner";
 
-function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
+const DashboardLayoutInner = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
   const { isSignedIn, isLoading } = useAuth();
@@ -96,11 +96,11 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function DashboardLayout({
+const DashboardLayout = ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   return (
     <UserProvider>
       <SubscriptionProvider>
@@ -112,4 +112,6 @@ export default function DashboardLayout({
       </SubscriptionProvider>
     </UserProvider>
   );
-}
+};
+
+export default DashboardLayout;

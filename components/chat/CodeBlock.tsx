@@ -14,7 +14,7 @@ interface CodeBlockProps {
   language?: string;
 }
 
-export function CodeBlock({ code, language = "text" }: CodeBlockProps) {
+export const CodeBlock = ({ code, language = "text" }: CodeBlockProps) => {
   const [copied, setCopied] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === "dark";

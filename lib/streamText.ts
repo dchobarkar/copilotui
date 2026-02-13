@@ -2,12 +2,12 @@
  * Word-by-word streaming utility for mock chat responses.
  */
 
-export function streamText(
+export const streamText = (
   text: string,
   onChunk: (chunk: string) => void,
   onComplete: () => void,
   speedMs: number,
-): () => void {
+): (() => void) => {
   const words = text.split(/(\s+)/);
   let i = 0;
   const interval = setInterval(() => {

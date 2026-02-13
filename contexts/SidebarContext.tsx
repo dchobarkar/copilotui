@@ -12,7 +12,7 @@ interface SidebarContextValue {
 
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
-export function SidebarProvider({ children }: { children: React.ReactNode }) {
+export const SidebarProvider = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(true);
 
@@ -34,7 +34,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useSidebar() {
+export const useSidebar = () => {
   const ctx = useContext(SidebarContext);
   if (!ctx) throw new Error("useSidebar must be used within SidebarProvider");
   return ctx;

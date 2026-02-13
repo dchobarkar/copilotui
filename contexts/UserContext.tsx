@@ -16,7 +16,7 @@ type UserState = {
   email: string;
 };
 
-function loadUser(): UserState {
+const loadUser = (): UserState => {
   if (typeof window === "undefined") {
     return { name: mockUser.name, email: mockUser.email };
   }
@@ -35,7 +35,7 @@ function loadUser(): UserState {
   return { name: mockUser.name, email: mockUser.email };
 }
 
-function saveUser(user: UserState) {
+const saveUser = (user: UserState) => {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
@@ -51,7 +51,7 @@ type UserContextValue = {
 
 const UserContext = createContext<UserContextValue | null>(null);
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserState>(() => ({
     name: mockUser.name,
     email: mockUser.email,
@@ -77,7 +77,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useUser() {
+export const useUser = () => {
   const ctx = useContext(UserContext);
   if (!ctx) throw new Error("useUser must be used within UserProvider");
   return ctx;

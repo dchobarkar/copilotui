@@ -9,7 +9,7 @@ import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { PLANS, type PlanId } from "@/lib/subscription";
 
-export default function SubscriptionPage() {
+const SubscriptionPage = () => {
   const { planId, setPlan } = useSubscription();
   const [upgradingTo, setUpgradingTo] = useState<PlanId | null>(null);
   const [upgradeComplete, setUpgradeComplete] = useState<PlanId | null>(null);
@@ -139,4 +139,6 @@ export default function SubscriptionPage() {
       </PageContent>
     </>
   );
-}
+};
+
+export default SubscriptionPage;

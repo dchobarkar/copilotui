@@ -11,7 +11,7 @@ interface PageHeaderProps {
   children?: React.ReactNode;
 }
 
-export function PageHeader({ title, children }: PageHeaderProps) {
+export const PageHeader = ({ title, children }: PageHeaderProps) => {
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
 
   return (

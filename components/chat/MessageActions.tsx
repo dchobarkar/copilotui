@@ -22,7 +22,7 @@ interface MessageActionsProps {
   className?: string;
 }
 
-export function MessageActions({
+export const MessageActions = ({
   onCopy,
   copied = false,
   onRegenerate,
@@ -33,7 +33,7 @@ export function MessageActions({
   onDelete,
   onEdit,
   className = "",
-}: MessageActionsProps) {
+}: MessageActionsProps) => {
   const btn =
     "p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors";
   const active =

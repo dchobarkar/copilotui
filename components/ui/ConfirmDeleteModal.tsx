@@ -13,13 +13,13 @@ interface ConfirmDeleteModalProps {
   onCancel: () => void;
 }
 
-export function ConfirmDeleteModal({
+export const ConfirmDeleteModal = ({
   title,
   message,
   confirmLabel = "Delete",
   onConfirm,
   onCancel,
-}: ConfirmDeleteModalProps) {
+}: ConfirmDeleteModalProps) => {
   return (
     <Modal onClose={onCancel}>
       <h3

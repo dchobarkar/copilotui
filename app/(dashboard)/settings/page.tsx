@@ -24,7 +24,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Spinner } from "@/components/ui/Spinner";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-export default function SettingsPage() {
+const SettingsPage = () => {
   const router = useRouter();
   const { clearAllConversations } = useChatContext();
   const { user } = useUser();
@@ -439,4 +439,6 @@ export default function SettingsPage() {
       )}
     </>
   );
-}
+};
+
+export default SettingsPage;

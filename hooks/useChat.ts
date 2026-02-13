@@ -7,7 +7,7 @@ import { STORAGE_KEYS } from "@/data/constants";
 import { generateUUID } from "@/lib/uuid";
 import type { Conversation, Message } from "@/lib/types";
 
-function loadConversations(): Conversation[] {
+const loadConversations = (): Conversation[] => {
   if (typeof window === "undefined") return mockConversations;
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.conversations);
@@ -28,7 +28,7 @@ function loadConversations(): Conversation[] {
   }
 }
 
-function saveConversations(conversations: Conversation[]) {
+const saveConversations = (conversations: Conversation[]) => {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEYS.conversations, JSON.stringify(conversations));
@@ -37,7 +37,7 @@ function saveConversations(conversations: Conversation[]) {
   }
 }
 
-export function useChat() {
+export const useChat = () => {
   const [conversations, setConversations] = useState<Conversation[]>(
     () => mockConversations,
   );

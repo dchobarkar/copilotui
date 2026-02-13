@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { MOBILE_BREAKPOINT } from "@/data/breakpoints";
 
-export function useIsMobile() {
+export const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {

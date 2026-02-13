@@ -17,11 +17,11 @@ interface PageContentProps {
   className?: string;
 }
 
-export function PageContent({
+export const PageContent = ({
   children,
   maxWidth = "xl",
   className = "",
-}: PageContentProps) {
+}: PageContentProps) => {
   return (
     <div className="flex-1 overflow-y-auto">
       <div

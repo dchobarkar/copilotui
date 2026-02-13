@@ -14,14 +14,14 @@ interface ChatBubbleProps {
   onEditAndRegenerate?: (messageId: string, newContent: string) => void;
 }
 
-function formatTime(date: Date) {
+const formatTime = (date: Date) => {
   return new Date(date).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
   });
 }
 
-function ChatBubbleInner({
+const ChatBubbleInner = ({
   message,
   isStreaming = false,
   streamingContent,
@@ -29,7 +29,7 @@ function ChatBubbleInner({
   onDelete,
   onEdit,
   onEditAndRegenerate,
-}: ChatBubbleProps) {
+}: ChatBubbleProps) => {
   const isUser = message.role === "user";
   const content =
     isStreaming && streamingContent !== undefined

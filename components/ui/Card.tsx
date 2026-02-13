@@ -9,11 +9,11 @@ interface CardProps {
 const CARD_BASE =
   "rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700";
 
-export function Card({
+export const Card = ({
   children,
   className = "",
   as: Component = "div",
-}: CardProps) {
+}: CardProps) => {
   return (
     <Component className={`${CARD_BASE} ${className}`}>
       {children}
@@ -27,11 +27,11 @@ interface CardButtonProps {
   className?: string;
 }
 
-export function CardButton({
+export const CardButton = ({
   children,
   onClick,
   className = "",
-}: CardButtonProps) {
+}: CardButtonProps) => {
   return (
     <button
       type="button"

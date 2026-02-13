@@ -10,7 +10,7 @@ import {
   type ResponseCategory,
 } from "@/data/mockResponses";
 
-function detectCategory(prompt: string): ResponseCategory {
+const detectCategory = (prompt: string): ResponseCategory => {
   const lower = prompt.toLowerCase().trim();
 
   // Greeting / casual (only when prompt is just a greeting)
@@ -88,7 +88,7 @@ function detectCategory(prompt: string): ResponseCategory {
 }
 
 /** Extract main subject/topic from prompt for contextual responses */
-function extractSubject(prompt: string): string {
+const extractSubject = (prompt: string): string => {
   const lower = prompt.toLowerCase().trim();
   const cleaned = lower
     .replace(
@@ -102,17 +102,17 @@ function extractSubject(prompt: string): string {
   return phrase || "that";
 }
 
-function truncateForEcho(text: string, maxLen = 50): string {
+const truncateForEcho = (text: string, maxLen = 50): string => {
   const trimmed = text.trim();
   if (trimmed.length <= maxLen) return trimmed;
   return trimmed.slice(0, maxLen).trim() + "…";
 }
 
-function withSubject(template: string, subject: string): string {
+const withSubject = (template: string, subject: string): string => {
   return template.replace(/\{subject\}/g, subject);
 }
 
-export function getMockResponse(userPrompt: string): string {
+export const getMockResponse = (userPrompt: string): string => {
   const trimmed = userPrompt.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
   if (!trimmed) {
     return "I'd be happy to help. What would you like to know or work on?";

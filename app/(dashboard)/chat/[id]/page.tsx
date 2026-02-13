@@ -15,7 +15,7 @@ import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
 import { PageHeader } from "@/components/layout/PageHeader";
 
-export default function ChatIdPage() {
+const ChatIdPage = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -473,4 +473,6 @@ export default function ChatIdPage() {
       </div>
     </>
   );
-}
+};
+
+export default ChatIdPage;

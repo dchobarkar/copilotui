@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { STORAGE_KEYS } from "@/data/constants";
 
-export function SidebarUser() {
+export const SidebarUser = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { plan } = useSubscription();

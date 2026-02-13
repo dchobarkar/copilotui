@@ -9,12 +9,12 @@ interface AccordionItemProps {
   onToggle: () => void;
 }
 
-export function AccordionItem({
+export const AccordionItem = ({
   question,
   answer,
   isOpen,
   onToggle,
-}: AccordionItemProps) {
+}: AccordionItemProps) => {
   return (
     <div className="rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 overflow-hidden">
       <button

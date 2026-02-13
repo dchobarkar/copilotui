@@ -5,7 +5,7 @@ export const metadata = {
   description: "The page you are looking for does not exist.",
 };
 
-export default function NotFound() {
+const NotFound = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 dark:bg-slate-950 px-4">
       <div className="text-center max-w-md">
@@ -36,4 +36,6 @@ export default function NotFound() {
       </div>
     </div>
   );
-}
+};
+
+export default NotFound;

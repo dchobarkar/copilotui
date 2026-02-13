@@ -23,13 +23,13 @@ interface ButtonProps
   size?: "sm" | "md";
 }
 
-export function Button({
+export const Button = ({
   variant = "primary",
   size = "md",
   className = "",
   children,
   ...props
-}: ButtonProps) {
+}: ButtonProps) => {
   const sizeClass = size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-sm";
   return (
     <button

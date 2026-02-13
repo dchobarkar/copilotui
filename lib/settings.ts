@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS } from "@/data/settings";
 import { STORAGE_KEYS } from "@/data/constants";
 import type { SettingsState } from "@/data/settings";
 
-export function loadSettings(): SettingsState {
+export const loadSettings = (): SettingsState => {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.settings);
@@ -19,7 +19,7 @@ export function loadSettings(): SettingsState {
   return DEFAULT_SETTINGS;
 }
 
-export function saveSettings(settings: SettingsState) {
+export const saveSettings = (settings: SettingsState) => {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));

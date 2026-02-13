@@ -5,13 +5,13 @@ import { AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 
-export default function Error({
+const Error = ({
   error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}) => {
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -38,4 +38,6 @@ export default function Error({
       </div>
     </div>
   );
-}
+};
+
+export default Error;

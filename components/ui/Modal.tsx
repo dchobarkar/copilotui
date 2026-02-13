@@ -9,11 +9,11 @@ interface ModalProps {
   closeOnOverlayClick?: boolean;
 }
 
-export function Modal({
+export const Modal = ({
   children,
   onClose,
   closeOnOverlayClick = true,
-}: ModalProps) {
+}: ModalProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();

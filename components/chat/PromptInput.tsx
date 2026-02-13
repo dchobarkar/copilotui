@@ -17,14 +17,14 @@ export interface PromptInputHandle {
   addFiles: (files: FileList | File[]) => void;
 }
 
-export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(function PromptInput({
+export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(({
   onSubmit,
   disabled = false,
   placeholder = "Message CopilotUI…",
   showCharacterCount = false,
   maxLength = 4000,
   endAction,
-}, ref) {
+}, ref) => {
   const [value, setValue] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
