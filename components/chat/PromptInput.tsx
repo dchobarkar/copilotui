@@ -123,12 +123,12 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
             ))}
           </div>
         )}
-        <div className="flex items-end gap-2 pb-2">
+        <div className="flex items-center gap-2 pb-2 px-3">
         <button
           type="button"
           onClick={handlePaperclipClick}
           disabled={disabled}
-          className="p-2 rounded-lg text-stone-500 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-100 dark:hover:bg-slate-700/50 disabled:opacity-50 transition-colors shrink-0"
+          className="flex items-center justify-center p-2 rounded-lg text-stone-500 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-100 dark:hover:bg-slate-700/50 disabled:opacity-50 transition-colors shrink-0 size-10"
           title="Attach file"
         >
           <Paperclip className="w-4 h-4" />
@@ -151,7 +151,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           type="button"
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="p-2 rounded-lg text-stone-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-stone-100 dark:hover:bg-slate-700/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-stone-400 dark:disabled:hover:text-slate-400 transition-colors shrink-0"
+          className="flex items-center justify-center p-2 rounded-lg text-stone-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-stone-100 dark:hover:bg-slate-700/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-stone-400 dark:disabled:hover:text-slate-400 transition-colors shrink-0 size-10"
           title="Send"
         >
           <Send className="w-4 h-4" />
