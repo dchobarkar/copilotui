@@ -3,15 +3,14 @@
 import { useState, useCallback, useEffect } from "react";
 
 import { mockConversations } from "@/data/conversations";
+import { STORAGE_KEYS } from "@/data/constants";
 import { generateUUID } from "@/lib/uuid";
 import type { Conversation, Message } from "@/lib/types";
 
-const STORAGE_KEY = "copilotui-conversations";
-
-function loadConversations(): Conversation[] {
+const loadConversations = (): Conversation[] => {
   if (typeof window === "undefined") return mockConversations;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.conversations);
     if (!raw) return mockConversations;
     const parsed = JSON.parse(raw) as Conversation[];
     if (!Array.isArray(parsed) || parsed.length === 0) return mockConversations;
@@ -27,18 +26,21 @@ function loadConversations(): Conversation[] {
   } catch {
     return mockConversations;
   }
-}
+};
 
-function saveConversations(conversations: Conversation[]) {
+const saveConversations = (conversations: Conversation[]) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
+    localStorage.setItem(
+      STORAGE_KEYS.conversations,
+      JSON.stringify(conversations),
+    );
   } catch {
     // ignore
   }
-}
+};
 
-export function useChat() {
+const useChat = () => {
   const [conversations, setConversations] = useState<Conversation[]>(
     () => mockConversations,
   );
@@ -49,6 +51,7 @@ export function useChat() {
 
   useEffect(() => {
     const loaded = loadConversations();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConversations(loaded);
   }, []);
 
@@ -115,11 +118,7 @@ export function useChat() {
   );
 
   const updateMessage = useCallback(
-    (
-      messageId: string,
-      content: string,
-      conversationId?: string | null,
-    ) => {
+    (messageId: string, content: string, conversationId?: string | null) => {
       const targetId = conversationId ?? activeId;
       if (!targetId) return;
       setConversations((prev) =>
@@ -232,4 +231,6 @@ export function useChat() {
     searchQuery,
     setSearchQuery,
   };
-}
+};
+
+export default useChat;

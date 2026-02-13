@@ -8,21 +8,20 @@ import {
   useEffect,
 } from "react";
 
-import { mockUser } from "@/lib/user";
-
-const STORAGE_KEY = "copilotui-user";
+import { mockUser } from "@/data/user";
+import { STORAGE_KEYS } from "@/data/constants";
 
 type UserState = {
   name: string;
   email: string;
 };
 
-function loadUser(): UserState {
+const loadUser = (): UserState => {
   if (typeof window === "undefined") {
     return { name: mockUser.name, email: mockUser.email };
   }
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEYS.user);
     if (stored) {
       const parsed = JSON.parse(stored) as UserState;
       return {
@@ -34,16 +33,16 @@ function loadUser(): UserState {
     // ignore
   }
   return { name: mockUser.name, email: mockUser.email };
-}
+};
 
-function saveUser(user: UserState) {
+const saveUser = (user: UserState) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
   } catch {
     // ignore
   }
-}
+};
 
 type UserContextValue = {
   user: UserState;
@@ -52,7 +51,7 @@ type UserContextValue = {
 
 const UserContext = createContext<UserContextValue | null>(null);
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserState>(() => ({
     name: mockUser.name,
     email: mockUser.email,
@@ -76,10 +75,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       {children}
     </UserContext.Provider>
   );
-}
+};
 
-export function useUser() {
+export const useUser = () => {
   const ctx = useContext(UserContext);
   if (!ctx) throw new Error("useUser must be used within UserProvider");
   return ctx;
-}
+};

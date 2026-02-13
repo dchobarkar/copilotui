@@ -1,65 +1,42 @@
-"use client";
-
-import { useEffect } from "react";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
 
 interface ConfirmDeleteModalProps {
   title: string;
+  message: string;
+  confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export function ConfirmDeleteModal({
+const ConfirmDeleteModal = ({
   title,
+  message,
+  confirmLabel = "Delete",
   onConfirm,
   onCancel,
-}: ConfirmDeleteModalProps) {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onCancel]);
-
+}: ConfirmDeleteModalProps) => {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      onClick={onCancel}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="delete-dialog-title"
-    >
-      <div
-        className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-700 shadow-xl p-4"
-        onClick={(e) => e.stopPropagation()}
+    <Modal onClose={onCancel}>
+      <h3
+        id="delete-dialog-title"
+        className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1"
       >
-        <h3
-          id="delete-dialog-title"
-          className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1"
-        >
-          Delete conversation
-        </h3>
-        <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-          Are you sure you want to delete &quot;{title}&quot;? This cannot be
-          undone.
-        </p>
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-3 py-1.5 rounded-lg text-sm text-stone-600 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-800"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="px-3 py-1.5 rounded-lg text-sm bg-red-600 hover:bg-red-700 text-white"
-          >
-            Delete
-          </button>
-        </div>
+        {title}
+      </h3>
+      <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
+        {message}
+      </p>
+      <div className="flex justify-end gap-2">
+        <Button variant="ghost" size="sm" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button variant="danger" size="sm" onClick={onConfirm}>
+          {confirmLabel}
+        </Button>
       </div>
-    </div>
+    </Modal>
   );
-}
+};
+
+export default ConfirmDeleteModal;

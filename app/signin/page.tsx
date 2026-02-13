@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SignInPage() {
+const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -15,4 +15,6 @@ export default function SignInPage() {
       <div className="w-8 h-8 border-2 border-stone-300 dark:border-slate-600 border-t-violet-600 rounded-full animate-spin" />
     </div>
   );
-}
+};
+
+export default Page;

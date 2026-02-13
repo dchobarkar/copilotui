@@ -22,7 +22,7 @@ interface MessageActionsProps {
   className?: string;
 }
 
-export function MessageActions({
+const MessageActions = ({
   onCopy,
   copied = false,
   onRegenerate,
@@ -33,11 +33,10 @@ export function MessageActions({
   onDelete,
   onEdit,
   className = "",
-}: MessageActionsProps) {
+}: MessageActionsProps) => {
   const btn =
     "p-1.5 rounded text-stone-400 dark:text-slate-400 hover:text-stone-700 dark:hover:text-slate-200 hover:bg-stone-200 dark:hover:bg-slate-700/50 transition-colors";
-  const active =
-    "text-violet-600 dark:text-violet-400";
+  const active = "text-violet-600 dark:text-violet-400";
 
   return (
     <div
@@ -68,12 +67,7 @@ export function MessageActions({
         </button>
       )}
       {onLike && (
-        <button
-          type="button"
-          onClick={onLike}
-          className={btn}
-          title="Like"
-        >
+        <button type="button" onClick={onLike} className={btn} title="Like">
           <ThumbsUp
             className={`w-3.5 h-3.5 ${feedback === "like" ? `fill-current ${active}` : ""}`}
           />
@@ -97,12 +91,7 @@ export function MessageActions({
         </button>
       )}
       {onDelete && (
-        <button
-          type="button"
-          onClick={onDelete}
-          className={btn}
-          title="Delete"
-        >
+        <button type="button" onClick={onDelete} className={btn} title="Delete">
           <Trash2 className="w-3.5 h-3.5 hover:text-red-500" />
         </button>
       )}
@@ -113,4 +102,6 @@ export function MessageActions({
       )}
     </div>
   );
-}
+};
+
+export default MessageActions;

@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, LogIn } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { STORAGE_KEYS } from "@/data/constants";
 
-const JUST_SIGNED_OUT_KEY = "copilotui-just-signed-out";
-
-export default function LoggedOutPage() {
+const Page = () => {
   const router = useRouter();
   const { signIn, isSignedIn, isLoading } = useAuth();
   const [showProcess, setShowProcess] = useState(true);
@@ -22,9 +21,9 @@ export default function LoggedOutPage() {
   useEffect(() => {
     const justSignedOut =
       typeof window !== "undefined" &&
-      sessionStorage.getItem(JUST_SIGNED_OUT_KEY);
+      sessionStorage.getItem(STORAGE_KEYS.justSignedOut);
     if (justSignedOut) {
-      sessionStorage.removeItem(JUST_SIGNED_OUT_KEY);
+      sessionStorage.removeItem(STORAGE_KEYS.justSignedOut);
       const t = setTimeout(() => setShowProcess(false), 1200);
       return () => clearTimeout(t);
     }
@@ -119,4 +118,6 @@ export default function LoggedOutPage() {
       </main>
     </div>
   );
-}
+};
+
+export default Page;

@@ -8,11 +8,12 @@ import { UserProvider } from "@/contexts/UserContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { Sidebar } from "@/components/chat/Sidebar";
-import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
+import useIsMobile from "@/hooks/useIsMobile";
+import Sidebar from "@/components/chat/Sidebar";
+import ConfirmDeleteModal from "@/components/ui/ConfirmDeleteModal";
+import Spinner from "@/components/ui/Spinner";
 
-function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
+const DashboardLayoutInner = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
   const { isSignedIn, isLoading } = useAuth();
@@ -45,7 +46,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   if (!isLoading && !isSignedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-slate-950">
-        <div className="w-8 h-8 border-2 border-stone-300 dark:border-slate-600 border-t-violet-600 rounded-full animate-spin" />
+        <Spinner />
       </div>
     );
   }
@@ -75,10 +76,8 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
 
       {deletePendingId && (
         <ConfirmDeleteModal
-          title={
-            conversations.find((c) => c.id === deletePendingId)?.title ??
-            "Untitled"
-          }
+          title="Delete conversation"
+          message={`Are you sure you want to delete "${conversations.find((c) => c.id === deletePendingId)?.title ?? "Untitled"}"? This cannot be undone.`}
           onConfirm={() => {
             if (deletePendingId) {
               const remaining = conversations.filter(
@@ -95,13 +94,9 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       )}
     </div>
   );
-}
+};
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <UserProvider>
       <SubscriptionProvider>
@@ -113,4 +108,6 @@ export default function DashboardLayout({
       </SubscriptionProvider>
     </UserProvider>
   );
-}
+};
+
+export default DashboardLayout;

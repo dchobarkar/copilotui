@@ -10,8 +10,8 @@ import {
   PanelLeft,
 } from "lucide-react";
 
-import { SidebarItem } from "./SidebarItem";
-import { SidebarUser } from "./SidebarUser";
+import SidebarItem from "./SidebarItem";
+import SidebarUser from "./SidebarUser";
 import type { Conversation } from "@/lib/types";
 
 interface SidebarProps {
@@ -28,7 +28,7 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-export function Sidebar({
+const Sidebar = ({
   conversations,
   activeId,
   searchQuery,
@@ -40,7 +40,7 @@ export function Sidebar({
   onSearchChange,
   isOpen,
   onToggle,
-}: SidebarProps) {
+}: SidebarProps) => {
   const router = useRouter();
   const favorites = conversations.filter((c) => c.isFavorite);
   const others = conversations.filter((c) => !c.isFavorite);
@@ -151,10 +151,10 @@ export function Sidebar({
                   title={conv.title}
                   isActive={conv.id === activeId}
                   isFavorite={conv.isFavorite}
-                    onSelect={() => {
-                      router.push(`/chat/${conv.id}`);
-                      onSelectChat(conv.id);
-                    }}
+                  onSelect={() => {
+                    router.push(`/chat/${conv.id}`);
+                    onSelectChat(conv.id);
+                  }}
                   onRename={onRename}
                   onDelete={onDelete}
                   onToggleFavorite={onToggleFavorite}
@@ -183,4 +183,6 @@ export function Sidebar({
       </aside>
     </>
   );
-}
+};
+
+export default Sidebar;

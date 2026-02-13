@@ -2,41 +2,20 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { PanelLeft } from "lucide-react";
 
 import { useChatContext } from "@/contexts/ChatContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useUser } from "@/contexts/UserContext";
+import { THINKING_DELAY_MS, STREAM_SPEED_MS } from "@/data/chat";
 import { getMockResponse } from "@/lib/mockResponses";
+import { streamText } from "@/lib/streamText";
 import { ChatBubble } from "@/components/chat/ChatBubble";
-import { TypingIndicator } from "@/components/ui/TypingIndicator";
-import { PromptInput } from "@/components/chat/PromptInput";
-import { PromptTemplates } from "@/components/chat/PromptTemplates";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import TypingIndicator from "@/components/ui/TypingIndicator";
+import PromptInput from "@/components/chat/PromptInput";
+import PromptTemplates from "@/components/chat/PromptTemplates";
+import PageHeader from "@/components/layout/PageHeader";
 
-const THINKING_DELAY_MS = 400;
-const STREAM_SPEED_MS = 35;
-
-function streamText(
-  text: string,
-  onChunk: (chunk: string) => void,
-  onComplete: () => void,
-) {
-  const words = text.split(/(\s+)/);
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i >= words.length) {
-      clearInterval(interval);
-      onComplete();
-      return;
-    }
-    onChunk(words[i] ?? "");
-    i++;
-  }, STREAM_SPEED_MS);
-  return () => clearInterval(interval);
-}
-
-export default function ChatIdPage() {
+const Page = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -52,7 +31,8 @@ export default function ChatIdPage() {
     removeMessagesAfter,
     renameConversation,
   } = useChatContext();
-  const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { setOpen: setSidebarOpen } = useSidebar();
   const { user } = useUser();
 
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
@@ -63,7 +43,9 @@ export default function ChatIdPage() {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const promptInputRef = useRef<{ addFiles: (files: FileList | File[]) => void }>(null);
+  const promptInputRef = useRef<{
+    addFiles: (files: FileList | File[]) => void;
+  }>(null);
 
   // Sync URL id with chat context
   useEffect(() => {
@@ -79,6 +61,7 @@ export default function ChatIdPage() {
     prevConvIdForClearRef.current = convId;
     if (prev != null && convId != null && prev !== convId) {
       streamAbortRef.current?.();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStreamingMessageId(null);
       setStreamingContent("");
       streamAbortRef.current = null;
@@ -215,6 +198,7 @@ export default function ChatIdPage() {
             streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
+          STREAM_SPEED_MS,
         );
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
@@ -235,7 +219,9 @@ export default function ChatIdPage() {
       if (!prevUser) return;
       removeMessage(messageId, convId);
       streamAbortRef.current?.();
-      const prompt = prevUser.content.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
+      const prompt = prevUser.content
+        .replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "")
+        .trim();
       const mockResponse = getMockResponse(prompt || "What can you help with?");
       const tempId = `stream-${Date.now()}`;
       setStreamingMessageId(tempId);
@@ -253,11 +239,18 @@ export default function ChatIdPage() {
             streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
+          STREAM_SPEED_MS,
         );
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
     },
-    [convId, currentConversation, streamingMessageId, removeMessage, addMessage],
+    [
+      convId,
+      currentConversation,
+      streamingMessageId,
+      removeMessage,
+      addMessage,
+    ],
   );
 
   const handleDeleteMessage = useCallback(
@@ -281,7 +274,9 @@ export default function ChatIdPage() {
       if (!convId || !currentConversation || streamingMessageId) return;
       updateMessage(messageId, newContent, convId);
       removeMessagesAfter(messageId, convId);
-      const prompt = newContent.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
+      const prompt = newContent
+        .replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "")
+        .trim();
       const mockResponse = getMockResponse(prompt || "What can you help with?");
       const tempId = `stream-${Date.now()}`;
       setStreamingMessageId(tempId);
@@ -300,11 +295,19 @@ export default function ChatIdPage() {
             streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
+          STREAM_SPEED_MS,
         );
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
     },
-    [convId, currentConversation, streamingMessageId, updateMessage, removeMessagesAfter, addMessage],
+    [
+      convId,
+      currentConversation,
+      streamingMessageId,
+      updateMessage,
+      removeMessagesAfter,
+      addMessage,
+    ],
   );
 
   const handleStopGeneration = useCallback(() => {
@@ -354,44 +357,33 @@ export default function ChatIdPage() {
 
   return (
     <>
-      <header className="flex items-center gap-2 px-4 py-3 border-b border-stone-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className={`p-2 rounded-lg text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 ${!sidebarOpen ? "flex" : "hidden"}`}
-          title="Expand sidebar"
-        >
-          <PanelLeft className="w-5 h-5" />
-        </button>
-        <div className="flex-1 min-w-0 flex items-center">
-          {isEditingTitle && convId ? (
-            <input
-              type="text"
-              value={editTitleValue}
-              onChange={(e) => setEditTitleValue(e.target.value)}
-              onBlur={handleTitleEditSubmit}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleTitleEditSubmit();
-                if (e.key === "Escape") {
-                  setEditTitleValue(displayTitle);
-                  setIsEditingTitle(false);
-                }
-              }}
-              className="w-full bg-transparent border-b border-violet-500/50 text-sm font-medium text-stone-700 dark:text-slate-300 focus:outline-none py-0.5"
-              autoFocus
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={handleTitleEditStart}
-              className="text-left w-full truncate text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-stone-900 dark:hover:text-slate-100 transition-colors"
-            >
-              {displayTitle}
-            </button>
-          )}
-        </div>
-        <ThemeToggle />
-      </header>
+      <PageHeader title={displayTitle}>
+        {isEditingTitle && convId ? (
+          <input
+            type="text"
+            value={editTitleValue}
+            onChange={(e) => setEditTitleValue(e.target.value)}
+            onBlur={handleTitleEditSubmit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleTitleEditSubmit();
+              if (e.key === "Escape") {
+                setEditTitleValue(displayTitle);
+                setIsEditingTitle(false);
+              }
+            }}
+            className="w-full bg-transparent border-b border-violet-500/50 text-sm font-medium text-stone-700 dark:text-slate-300 focus:outline-none py-0.5"
+            autoFocus
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={handleTitleEditStart}
+            className="text-left w-full truncate text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-stone-900 dark:hover:text-slate-100 transition-colors"
+          >
+            {displayTitle}
+          </button>
+        )}
+      </PageHeader>
 
       <div className="flex-1 min-h-0 min-w-0 relative">
         <div
@@ -399,56 +391,56 @@ export default function ChatIdPage() {
           className="h-full min-h-0 overflow-y-auto overflow-x-hidden"
         >
           <div className="max-w-3xl mx-auto py-6 px-4 sm:px-6 min-w-0 w-full">
-          {displayMessages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
-              <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">
-                {user.name
-                  ? `Hi ${user.name.split(" ")[0]}, what can I help you with?`
-                  : "What can I help you with?"}
-              </p>
-              <p className="text-stone-500 dark:text-slate-500 text-sm mb-4">
-                Start a conversation or try a prompt:
-              </p>
-              <PromptTemplates onSelect={handleSend} />
-              <p className="mt-6 text-xs text-stone-400 dark:text-slate-500">
-                Simulated responses · Concept demo
-              </p>
-            </div>
-          ) : (
-            <>
-              {displayMessages.map((msg) => (
-                <ChatBubble
-                  key={msg.id}
-                  message={msg}
-                  isStreaming={
-                    msg.id === streamingMessageId && msg.role === "assistant"
-                  }
-                  streamingContent={
-                    msg.id === streamingMessageId ? streamingContent : undefined
-                  }
-                  onRegenerate={
-                    msg.role === "assistant" ? handleRegenerate : undefined
-                  }
-                  onDelete={handleDeleteMessage}
-                  onEdit={
-                    msg.role === "user" ? handleEditMessage : undefined
-                  }
-                  onEditAndRegenerate={
-                    msg.role === "user" ? handleEditAndRegenerate : undefined
-                  }
-                />
-              ))}
-              {streamingMessageId && !streamingContent && (
-                <div className="flex gap-3 px-4 py-3 animate-fade-in">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center" />
-                  <div className="flex items-center">
-                    <TypingIndicator />
+            {displayMessages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
+                <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">
+                  {user.name
+                    ? `Hi ${user.name.split(" ")[0]}, what can I help you with?`
+                    : "What can I help you with?"}
+                </p>
+                <p className="text-stone-500 dark:text-slate-500 text-sm mb-4">
+                  Start a conversation or try a prompt:
+                </p>
+                <PromptTemplates onSelect={handleSend} />
+                <p className="mt-6 text-xs text-stone-400 dark:text-slate-500">
+                  Simulated responses · Concept demo
+                </p>
+              </div>
+            ) : (
+              <>
+                {displayMessages.map((msg) => (
+                  <ChatBubble
+                    key={msg.id}
+                    message={msg}
+                    isStreaming={
+                      msg.id === streamingMessageId && msg.role === "assistant"
+                    }
+                    streamingContent={
+                      msg.id === streamingMessageId
+                        ? streamingContent
+                        : undefined
+                    }
+                    onRegenerate={
+                      msg.role === "assistant" ? handleRegenerate : undefined
+                    }
+                    onDelete={handleDeleteMessage}
+                    onEdit={msg.role === "user" ? handleEditMessage : undefined}
+                    onEditAndRegenerate={
+                      msg.role === "user" ? handleEditAndRegenerate : undefined
+                    }
+                  />
+                ))}
+                {streamingMessageId && !streamingContent && (
+                  <div className="flex gap-3 px-4 py-3 animate-fade-in">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center" />
+                    <div className="flex items-center">
+                      <TypingIndicator />
+                    </div>
                   </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </>
-          )}
+                )}
+                <div ref={messagesEndRef} />
+              </>
+            )}
           </div>
         </div>
         {showScrollToBottom && (
@@ -499,4 +491,6 @@ export default function ChatIdPage() {
       </div>
     </>
   );
-}
+};
+
+export default Page;

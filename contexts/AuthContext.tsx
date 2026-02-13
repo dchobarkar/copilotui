@@ -8,29 +8,29 @@ import {
   useEffect,
 } from "react";
 
-const AUTH_STORAGE_KEY = "copilotui-auth";
+import { STORAGE_KEYS } from "@/data/constants";
 
-function loadAuth(): boolean {
+const loadAuth = (): boolean => {
   if (typeof window === "undefined") return false;
   try {
-    return localStorage.getItem(AUTH_STORAGE_KEY) === "true";
+    return localStorage.getItem(STORAGE_KEYS.auth) === "true";
   } catch {
     return false;
   }
-}
+};
 
-function saveAuth(signedIn: boolean) {
+const saveAuth = (signedIn: boolean) => {
   if (typeof window === "undefined") return;
   try {
     if (signedIn) {
-      localStorage.setItem(AUTH_STORAGE_KEY, "true");
+      localStorage.setItem(STORAGE_KEYS.auth, "true");
     } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEYS.auth);
     }
   } catch {
     // ignore
   }
-}
+};
 
 type AuthContextValue = {
   isSignedIn: boolean;
@@ -41,7 +41,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,10 +66,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
-}
+};

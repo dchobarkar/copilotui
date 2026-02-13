@@ -6,23 +6,15 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ghcolors } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Copy, Check } from "lucide-react";
 
-import { useTheme } from "@/hooks/useTheme";
+import useTheme from "@/hooks/useTheme";
+import { LANGUAGE_MAP } from "@/data/codeBlock";
 
 interface CodeBlockProps {
   code: string;
   language?: string;
 }
 
-const LANGUAGE_MAP: Record<string, string> = {
-  js: "javascript",
-  ts: "typescript",
-  tsx: "tsx",
-  jsx: "jsx",
-  sh: "bash",
-  bash: "bash",
-};
-
-export function CodeBlock({ code, language = "text" }: CodeBlockProps) {
+const CodeBlock = ({ code, language = "text" }: CodeBlockProps) => {
   const [copied, setCopied] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -36,7 +28,10 @@ export function CodeBlock({ code, language = "text" }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative group rounded-lg border border-stone-200 dark:border-slate-700/50 bg-stone-50 dark:bg-slate-900/80 my-3 overflow-hidden" style={{ width: "100%", maxWidth: "100%" }}>
+    <div
+      className="relative group rounded-lg border border-stone-200 dark:border-slate-700/50 bg-stone-50 dark:bg-slate-900/80 my-3 overflow-hidden"
+      style={{ width: "100%", maxWidth: "100%" }}
+    >
       <div className="flex items-center justify-between px-3 py-2 bg-stone-100 dark:bg-slate-800/80 border-b border-stone-200 dark:border-slate-700/50 min-w-0 shrink-0">
         <span className="text-xs font-medium text-stone-500 dark:text-slate-400 uppercase tracking-wider truncate min-w-0">
           {lang}
@@ -77,4 +72,6 @@ export function CodeBlock({ code, language = "text" }: CodeBlockProps) {
       </div>
     </div>
   );
-}
+};
+
+export default CodeBlock;

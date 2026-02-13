@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useChatContext } from "@/contexts/ChatContext";
 
-export default function ChatPage() {
+const Page = () => {
   const router = useRouter();
   const { allConversations } = useChatContext();
 
@@ -15,4 +15,6 @@ export default function ChatPage() {
   }, [allConversations, router]);
 
   return null;
-}
+};
+
+export default Page;

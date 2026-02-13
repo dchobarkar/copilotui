@@ -1,19 +1,21 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { CodeBlock } from "./CodeBlock";
+import CodeBlock from "./CodeBlock";
 
 interface MarkdownRendererProps {
   content: string;
   className?: string;
 }
 
-export function MarkdownRenderer({
+const MarkdownRenderer = ({
   content,
   className = "",
-}: MarkdownRendererProps) {
+}: MarkdownRendererProps) => {
   return (
-    <div className={`markdown-content min-w-0 max-w-full overflow-x-hidden ${className}`}>
+    <div
+      className={`markdown-content min-w-0 max-w-full overflow-x-hidden ${className}`}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -120,4 +122,6 @@ export function MarkdownRenderer({
       </ReactMarkdown>
     </div>
   );
-}
+};
+
+export default MarkdownRenderer;

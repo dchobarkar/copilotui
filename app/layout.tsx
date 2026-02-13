@@ -21,11 +21,11 @@ export const metadata: Metadata = {
     "Modern AI copilot interface built with Next.js, Tailwind, and real-time conversational UX.",
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -38,4 +38,6 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

@@ -1,29 +1,14 @@
-export const SETTINGS_STORAGE_KEY = "copilotui-settings";
+export { DEFAULT_SETTINGS } from "@/data/settings";
+export type { SettingsState } from "@/data/settings";
 
-export type SettingsState = {
-  improveModel: boolean;
-  chatHistory: boolean;
-  emailNotifs: boolean;
-  pushNotifs: boolean;
-  cookieEssential: boolean;
-  cookieAnalytics: boolean;
-  cookiePersonalization: boolean;
-};
+import { DEFAULT_SETTINGS } from "@/data/settings";
+import { STORAGE_KEYS } from "@/data/constants";
+import type { SettingsState } from "@/data/settings";
 
-export const DEFAULT_SETTINGS: SettingsState = {
-  improveModel: false,
-  chatHistory: true,
-  emailNotifs: true,
-  pushNotifs: false,
-  cookieEssential: true,
-  cookieAnalytics: false,
-  cookiePersonalization: false,
-};
-
-export function loadSettings(): SettingsState {
+export const loadSettings = (): SettingsState => {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
-    const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEYS.settings);
     if (stored) {
       const parsed = JSON.parse(stored) as Partial<SettingsState>;
       return { ...DEFAULT_SETTINGS, ...parsed };
@@ -32,13 +17,13 @@ export function loadSettings(): SettingsState {
     // ignore
   }
   return DEFAULT_SETTINGS;
-}
+};
 
-export function saveSettings(settings: SettingsState) {
+export const saveSettings = (settings: SettingsState) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
   } catch {
     // ignore
   }
-}
+};

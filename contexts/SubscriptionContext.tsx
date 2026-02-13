@@ -26,11 +26,11 @@ const SubscriptionContext = createContext<SubscriptionContextValue | null>(
   null,
 );
 
-export function SubscriptionProvider({
+export const SubscriptionProvider = ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   const [planId, setPlanIdState] = useState<PlanId>(loadSubscription());
 
   useEffect(() => {
@@ -50,11 +50,11 @@ export function SubscriptionProvider({
       {children}
     </SubscriptionContext.Provider>
   );
-}
+};
 
-export function useSubscription() {
+export const useSubscription = () => {
   const ctx = useContext(SubscriptionContext);
   if (!ctx)
     throw new Error("useSubscription must be used within SubscriptionProvider");
   return ctx;
-}
+};
