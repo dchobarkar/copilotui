@@ -92,6 +92,11 @@ export function useChat() {
     );
   }, []);
 
+  const clearAllConversations = useCallback(() => {
+    setConversations([]);
+    setActiveId(null);
+  }, []);
+
   const filteredConversations = searchQuery
     ? conversations.filter((c) =>
         c.title.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -109,6 +114,7 @@ export function useChat() {
     deleteConversation,
     renameConversation,
     toggleFavorite,
+    clearAllConversations,
     searchQuery,
     setSearchQuery,
   };

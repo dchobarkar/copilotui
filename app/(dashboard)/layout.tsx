@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { ChatProvider, useChatContext } from "@/contexts/ChatContext";
+import { UserProvider } from "@/contexts/UserContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Sidebar } from "@/components/chat/Sidebar";
 import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
@@ -12,6 +14,13 @@ import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
 function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { isSignedIn, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isSignedIn) {
+      router.replace("/logged-out");
+    }
+  }, [isSignedIn, isLoading, router]);
   const urlChatId =
     pathname?.match(/^\/chat\/([^/]+)$/)?.[1] ?? null;
 
@@ -34,6 +43,14 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   // Use URL as source of truth for active chat
   const activeIdFromUrl =
     urlChatId && urlChatId !== "new" ? urlChatId : null;
+
+  if (!isLoading && !isSignedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-slate-950">
+        <div className="w-8 h-8 border-2 border-stone-300 dark:border-slate-600 border-t-violet-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-stone-50 dark:bg-slate-950 overflow-hidden">
@@ -88,10 +105,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ChatProvider>
-      <SidebarProvider>
-        <DashboardLayoutInner>{children}</DashboardLayoutInner>
-      </SidebarProvider>
-    </ChatProvider>
+    <UserProvider>
+      <ChatProvider>
+        <SidebarProvider>
+          <DashboardLayoutInner>{children}</DashboardLayoutInner>
+        </SidebarProvider>
+      </ChatProvider>
+    </UserProvider>
   );
 }

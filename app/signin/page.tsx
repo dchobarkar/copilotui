@@ -3,20 +3,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { useAuth } from "@/contexts/AuthContext";
-
-export default function HomePage() {
+export default function SignInPage() {
   const router = useRouter();
-  const { isSignedIn, isLoading } = useAuth();
 
   useEffect(() => {
-    if (isLoading) return;
-    if (isSignedIn) {
-      router.replace("/chat");
-    } else {
-      router.replace("/logged-out");
-    }
-  }, [isSignedIn, isLoading, router]);
+    router.replace("/logged-out");
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-slate-950">

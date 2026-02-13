@@ -2,11 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { User, Settings, LogOut, ChevronUp } from "lucide-react";
-import { mockUser } from "@/lib/user";
+import { usePathname, useRouter } from "next/navigation";
+import { User, Settings, HelpCircle, LogOut, ChevronUp } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function SidebarUser() {
+  const { user } = useUser();
+  const { signOut } = useAuth();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -21,7 +25,7 @@ export function SidebarUser() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const initials = mockUser.name
+  const initials = user.name
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -40,10 +44,10 @@ export function SidebarUser() {
         </div>
         <div className="flex-1 min-w-0 text-left">
           <p className="text-sm font-medium text-stone-800 dark:text-slate-200 truncate">
-            {mockUser.name}
+            {user.name}
           </p>
           <p className="text-xs text-stone-500 dark:text-slate-400 truncate">
-            {mockUser.email}
+            {user.email}
           </p>
         </div>
         <ChevronUp
@@ -79,15 +83,34 @@ export function SidebarUser() {
             <Settings className="w-4 h-4" />
             Settings
           </Link>
-          <div className="border-t border-stone-200 dark:border-slate-700 my-1" />
           <Link
-            href="/"
+            href="/help"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-stone-100 dark:hover:bg-slate-700/50 transition-colors"
+            className={`flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
+              pathname === "/help"
+                ? "bg-stone-100 dark:bg-slate-700/50 text-stone-900 dark:text-slate-100"
+                : "text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700/50"
+            }`}
+          >
+            <HelpCircle className="w-4 h-4" />
+            Help & Support
+          </Link>
+          <div className="border-t border-stone-200 dark:border-slate-700 my-1" />
+          <button
+            type="button"
+            onClick={() => {
+              setIsOpen(false);
+              if (typeof sessionStorage !== "undefined") {
+                sessionStorage.setItem("copilotui-just-signed-out", "true");
+              }
+              signOut();
+              router.push("/logged-out");
+            }}
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-stone-100 dark:hover:bg-slate-700/50 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign out
-          </Link>
+          </button>
         </div>
       )}
     </div>

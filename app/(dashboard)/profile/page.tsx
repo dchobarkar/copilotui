@@ -1,26 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PanelLeft } from "lucide-react";
 import Link from "next/link";
 
 import { useSidebar } from "@/contexts/SidebarContext";
+import { useUser } from "@/contexts/UserContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { mockUser } from "@/lib/user";
 
 export default function ProfilePage() {
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
-  const [name, setName] = useState(mockUser.name);
-  const [email, setEmail] = useState(mockUser.email);
+  const { user, updateUser } = useUser();
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setName(user.name);
+    setEmail(user.email);
+  }, [user.name, user.email]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    updateUser({ name, email });
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const initials = name
+  const initials = user.name
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -51,10 +58,10 @@ export default function ProfilePage() {
               {initials}
             </div>
             <h2 className="text-lg font-semibold text-stone-900 dark:text-slate-100">
-              {name}
+              {user.name}
             </h2>
             <p className="text-sm text-stone-500 dark:text-slate-400">
-              {email}
+              {user.email}
             </p>
           </div>
 
