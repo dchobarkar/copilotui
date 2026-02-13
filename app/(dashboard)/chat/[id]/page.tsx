@@ -65,6 +65,7 @@ export default function ChatIdPage() {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const promptInputRef = useRef<{ addFiles: (files: FileList | File[]) => void }>(null);
 
   // Sync URL id with chat context
   useEffect(() => {
@@ -94,6 +95,9 @@ export default function ChatIdPage() {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingFile(false);
+    if (e.dataTransfer.files?.length) {
+      promptInputRef.current?.addFiles(e.dataTransfer.files);
+    }
   }, []);
 
   const convId = id === "new" ? null : id;
@@ -151,7 +155,7 @@ export default function ChatIdPage() {
   }, [startNewChat, router, setActiveId]);
 
   const handleSend = useCallback(
-    (text: string) => {
+    (text: string, files?: File[]) => {
       let targetId = convId;
       if (!targetId) {
         const newId = startNewChat();
@@ -159,9 +163,20 @@ export default function ChatIdPage() {
         targetId = newId;
       }
 
-      addMessage("user", text, targetId);
+      const fileSuffix =
+        files && files.length > 0
+          ? `\n\n[Attached: ${files.map((f) => f.name).join(", ")}]`
+          : "";
+      const messageContent = (text || "Sent with attachments") + fileSuffix;
 
-      const mockResponse = getMockResponse(text);
+      addMessage("user", messageContent, targetId);
+
+      const promptForMock =
+        text ||
+        (files?.length
+          ? `User attached ${files.length} file(s): ${files.map((f) => f.name).join(", ")}`
+          : "What can you help with?");
+      const mockResponse = getMockResponse(promptForMock);
       const tempId = `msg-stream-${Date.now()}`;
       setStreamingMessageId(tempId);
       setStreamingContent("");
@@ -257,6 +272,7 @@ export default function ChatIdPage() {
             </div>
           )}
           <PromptInput
+            ref={promptInputRef}
             onSubmit={handleSend}
             disabled={!!streamingMessageId}
             placeholder="Message CopilotUI…"

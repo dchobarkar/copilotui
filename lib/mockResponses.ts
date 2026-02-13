@@ -14,6 +14,13 @@ type ResponseCategory =
 function detectCategory(prompt: string): ResponseCategory {
   const lower = prompt.toLowerCase();
   if (
+    /attached|attachment|file\(s\)|\.pdf|\.png|\.jpg|\.txt|\.md|\.json|\.csv/i.test(
+      lower,
+    )
+  ) {
+    return "summarize";
+  }
+  if (
     /summarize|summary|summarise|tl;?dr|brief|overview|recap/i.test(lower)
   ) {
     return "summarize";
