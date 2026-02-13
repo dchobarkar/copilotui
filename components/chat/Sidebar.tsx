@@ -164,8 +164,17 @@ export function Sidebar({
           </div>
 
           {conversations.length === 0 && (
-            <div className="py-8 text-center text-sm text-stone-500 dark:text-slate-500">
-              No conversations yet
+            <div className="py-8 px-4 text-center">
+              <p className="text-sm text-stone-500 dark:text-slate-500 mb-3">
+                No conversations yet
+              </p>
+              <button
+                type="button"
+                onClick={handleNewChat}
+                className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium"
+              >
+                Start your first chat
+              </button>
             </div>
           )}
         </div>

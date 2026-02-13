@@ -19,6 +19,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -55,7 +60,23 @@ body {
   animation: scale-in 0.15s ease-out forwards;
 }
 
+/* Code block scroll container - horizontal scroll on mobile */
+.code-block-scroll {
+  overflow-x: scroll !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+}
+
+/* Pre keeps natural width so parent scrolls */
 pre[class*="language-"] {
   margin: 0;
   padding: 0;
+  overflow: visible;
+  display: block;
+  min-width: min-content;
 }

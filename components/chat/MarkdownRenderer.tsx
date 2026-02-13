@@ -13,7 +13,7 @@ export function MarkdownRenderer({
   className = "",
 }: MarkdownRendererProps) {
   return (
-    <div className={`markdown-content ${className}`}>
+    <div className={`markdown-content min-w-0 max-w-full overflow-x-hidden ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
