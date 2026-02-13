@@ -22,12 +22,19 @@ type SubscriptionContextValue = {
   setPlan: (planId: PlanId) => void;
 };
 
-const SubscriptionContext = createContext<SubscriptionContextValue | null>(null);
+const SubscriptionContext = createContext<SubscriptionContextValue | null>(
+  null,
+);
 
-export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+export function SubscriptionProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [planId, setPlanIdState] = useState<PlanId>(loadSubscription());
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPlanIdState(loadSubscription());
   }, []);
 
@@ -47,6 +54,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
 export function useSubscription() {
   const ctx = useContext(SubscriptionContext);
-  if (!ctx) throw new Error("useSubscription must be used within SubscriptionProvider");
+  if (!ctx)
+    throw new Error("useSubscription must be used within SubscriptionProvider");
   return ctx;
 }

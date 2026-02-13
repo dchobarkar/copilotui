@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
+
 import { useChat } from "@/hooks/useChat";
 
 type ChatContextValue = ReturnType<typeof useChat>;
@@ -9,9 +10,7 @@ const ChatContext = createContext<ChatContextValue | null>(null);
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const value = useChat();
-  return (
-    <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }
 
 export function useChatContext() {

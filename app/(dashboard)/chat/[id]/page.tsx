@@ -6,6 +6,7 @@ import { PanelLeft } from "lucide-react";
 
 import { useChatContext } from "@/contexts/ChatContext";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { useUser } from "@/contexts/UserContext";
 import { getMockResponse } from "@/lib/mockResponses";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import { TypingIndicator } from "@/components/ui/TypingIndicator";
@@ -41,13 +42,13 @@ export default function ChatIdPage() {
 
   const {
     conversations: allConversations,
-    activeId,
     activeConversation,
     setActiveId,
     startNewChat,
     addMessage,
   } = useChatContext();
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
+  const { user } = useUser();
 
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null,
@@ -109,6 +110,20 @@ export default function ChatIdPage() {
     scrollToBottom();
   }, [displayMessages.length, streamingContent, scrollToBottom]);
 
+  // Keyboard shortcut: Cmd/Ctrl+Shift+O for new chat
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "O") {
+        e.preventDefault();
+        const newId = startNewChat();
+        router.replace(`/chat/${newId}`);
+        setActiveId(newId);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [startNewChat, router, setActiveId]);
+
   const handleSend = useCallback(
     (text: string) => {
       let targetId = convId;
@@ -152,7 +167,7 @@ export default function ChatIdPage() {
         <h1 className="flex-1 text-sm font-medium text-stone-700 dark:text-slate-300 truncate">
           {id === "new"
             ? "New chat"
-            : activeConversation?.title ?? "New chat"}
+            : (activeConversation?.title ?? "New chat")}
         </h1>
         <ThemeToggle />
       </header>
@@ -161,6 +176,11 @@ export default function ChatIdPage() {
         <div className="max-w-3xl mx-auto py-6">
           {displayMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
+              <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">
+                {user.name
+                  ? `Hi ${user.name.split(" ")[0]}, what can I help you with?`
+                  : "What can I help you with?"}
+              </p>
               <p className="text-stone-500 dark:text-slate-500 text-sm mb-4">
                 Start a conversation or try a prompt:
               </p>
@@ -176,9 +196,7 @@ export default function ChatIdPage() {
                     msg.id === streamingMessageId && msg.role === "assistant"
                   }
                   streamingContent={
-                    msg.id === streamingMessageId
-                      ? streamingContent
-                      : undefined
+                    msg.id === streamingMessageId ? streamingContent : undefined
                   }
                 />
               ))}

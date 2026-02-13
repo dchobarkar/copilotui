@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User, Settings, HelpCircle, CreditCard, LogOut, ChevronUp } from "lucide-react";
+import { User, Settings, HelpCircle, CreditCard, LogOut, ChevronUp, Sparkles } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
@@ -12,6 +12,7 @@ export function SidebarUser() {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { plan } = useSubscription();
+  const isFreePlan = plan.id === "free";
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -112,6 +113,16 @@ export function SidebarUser() {
             <CreditCard className="w-4 h-4" />
             Subscription
           </Link>
+          {isFreePlan && (
+            <Link
+              href="/subscription"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/30 transition-colors font-medium"
+            >
+              <Sparkles className="w-4 h-4" />
+              Upgrade to Pro
+            </Link>
+          )}
           <div className="border-t border-stone-200 dark:border-slate-700 my-1" />
           <button
             type="button"

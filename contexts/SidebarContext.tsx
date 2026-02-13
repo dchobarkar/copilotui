@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface SidebarContextValue {

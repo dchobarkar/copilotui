@@ -22,12 +22,10 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       router.replace("/logged-out");
     }
   }, [isSignedIn, isLoading, router]);
-  const urlChatId =
-    pathname?.match(/^\/chat\/([^/]+)$/)?.[1] ?? null;
+  const urlChatId = pathname?.match(/^\/chat\/([^/]+)$/)?.[1] ?? null;
 
   const {
     conversations,
-    activeId,
     setActiveId,
     startNewChat,
     deleteConversation,
@@ -42,8 +40,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const [deletePendingId, setDeletePendingId] = useState<string | null>(null);
 
   // Use URL as source of truth for active chat
-  const activeIdFromUrl =
-    urlChatId && urlChatId !== "new" ? urlChatId : null;
+  const activeIdFromUrl = urlChatId && urlChatId !== "new" ? urlChatId : null;
 
   if (!isLoading && !isSignedIn) {
     return (
@@ -108,11 +105,11 @@ export default function DashboardLayout({
   return (
     <UserProvider>
       <SubscriptionProvider>
-      <ChatProvider>
-        <SidebarProvider>
-          <DashboardLayoutInner>{children}</DashboardLayoutInner>
-        </SidebarProvider>
-      </ChatProvider>
+        <ChatProvider>
+          <SidebarProvider>
+            <DashboardLayoutInner>{children}</DashboardLayoutInner>
+          </SidebarProvider>
+        </ChatProvider>
       </SubscriptionProvider>
     </UserProvider>
   );

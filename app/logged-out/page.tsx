@@ -20,12 +20,15 @@ export default function LoggedOutPage() {
   }, [isSignedIn, isLoading, router]);
 
   useEffect(() => {
-    const justSignedOut = typeof window !== "undefined" && sessionStorage.getItem(JUST_SIGNED_OUT_KEY);
+    const justSignedOut =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem(JUST_SIGNED_OUT_KEY);
     if (justSignedOut) {
       sessionStorage.removeItem(JUST_SIGNED_OUT_KEY);
       const t = setTimeout(() => setShowProcess(false), 1200);
       return () => clearTimeout(t);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowProcess(false);
   }, []);
 
@@ -87,8 +90,8 @@ export default function LoggedOutPage() {
                 You&apos;re Logged Out
               </h1>
               <p className="text-sm text-stone-600 dark:text-slate-400 text-center mb-6">
-                You have been successfully logged out of CopilotUI. Thank you for
-                using our platform.
+                You have been successfully logged out of CopilotUI. Thank you
+                for using our platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button

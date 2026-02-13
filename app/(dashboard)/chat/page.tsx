@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
 import { useChatContext } from "@/contexts/ChatContext";
 
 export default function ChatPage() {

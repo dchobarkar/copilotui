@@ -91,6 +91,7 @@ export function Sidebar({
           type="button"
           onClick={handleNewChat}
           className="flex items-center gap-2 mx-3 mt-3 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 dark:bg-violet-600/80 dark:hover:bg-violet-600 text-white text-sm font-medium transition-colors"
+          title="New chat (⌘⇧O)"
         >
           <Plus className="w-4 h-4" />
           New chat

@@ -40,9 +40,13 @@ export default function SettingsPage() {
     draft.improveModel !== saved.improveModel ||
     draft.chatHistory !== saved.chatHistory ||
     draft.emailNotifs !== saved.emailNotifs ||
-    draft.pushNotifs !== saved.pushNotifs;
+    draft.pushNotifs !== saved.pushNotifs ||
+    draft.cookieEssential !== saved.cookieEssential ||
+    draft.cookieAnalytics !== saved.cookieAnalytics ||
+    draft.cookiePersonalization !== saved.cookiePersonalization;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSaved(loadSettings());
     setDraft(loadSettings());
   }, []);
@@ -72,7 +76,10 @@ export default function SettingsPage() {
 
   const handleNavigate = useCallback(
     (href: string) => {
-      if (isDirty && !window.confirm("You have unsaved changes. Leave anyway?")) {
+      if (
+        isDirty &&
+        !window.confirm("You have unsaved changes. Leave anyway?")
+      ) {
         return;
       }
       router.push(href);
@@ -96,7 +103,9 @@ export default function SettingsPage() {
       return;
     }
     if (trimmed !== expected) {
-      setDeleteError("The email does not match your account. Please enter the correct email.");
+      setDeleteError(
+        "The email does not match your account. Please enter the correct email.",
+      );
       return;
     }
     setDeleteStep("processing");
@@ -174,6 +183,82 @@ export default function SettingsPage() {
               </div>
             </section>
 
+            {/* Privacy & Cookies */}
+            <section>
+              <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
+                Privacy & Cookies
+              </h2>
+              <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
+                Manage cookie preferences. Essential cookies are required for
+                the app to function.
+              </p>
+              <div className="space-y-2">
+                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
+                  <div>
+                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                      Essential cookies
+                    </p>
+                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                      Required for sign-in, preferences, and core features
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={draft.cookieEssential}
+                    onChange={(e) =>
+                      setDraft((d) => ({
+                        ...d,
+                        cookieEssential: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
+                  />
+                </label>
+                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
+                  <div>
+                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                      Analytics cookies
+                    </p>
+                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                      Help us understand how the product is used
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={draft.cookieAnalytics}
+                    onChange={(e) =>
+                      setDraft((d) => ({
+                        ...d,
+                        cookieAnalytics: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
+                  />
+                </label>
+                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
+                  <div>
+                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                      Personalization cookies
+                    </p>
+                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                      Customize your experience and suggestions
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={draft.cookiePersonalization}
+                    onChange={(e) =>
+                      setDraft((d) => ({
+                        ...d,
+                        cookiePersonalization: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
+                  />
+                </label>
+              </div>
+            </section>
+
             {/* Notifications */}
             <section>
               <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
@@ -231,7 +316,10 @@ export default function SettingsPage() {
                     type="checkbox"
                     checked={draft.improveModel}
                     onChange={(e) =>
-                      setDraft((d) => ({ ...d, improveModel: e.target.checked }))
+                      setDraft((d) => ({
+                        ...d,
+                        improveModel: e.target.checked,
+                      }))
                     }
                     className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
                   />
@@ -396,7 +484,11 @@ export default function SettingsPage() {
       {deleteStep && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-          onClick={deleteStep === "processing" || deleteStep === "done" ? undefined : handleDeleteCancel}
+          onClick={
+            deleteStep === "processing" || deleteStep === "done"
+              ? undefined
+              : handleDeleteCancel
+          }
         >
           <div
             className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-700 shadow-xl p-4"
@@ -408,8 +500,8 @@ export default function SettingsPage() {
                   Delete account
                 </h3>
                 <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-                  Are you sure? This will permanently delete your account and all
-                  conversation data. This cannot be undone.
+                  Are you sure? This will permanently delete your account and
+                  all conversation data. This cannot be undone.
                 </p>
                 <div className="flex justify-end gap-2">
                   <button
@@ -485,8 +577,8 @@ export default function SettingsPage() {
                   Account deleted
                 </p>
                 <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-                  Your account has been permanently deleted. You have been signed
-                  out.
+                  Your account has been permanently deleted. You have been
+                  signed out.
                 </p>
                 <button
                   type="button"

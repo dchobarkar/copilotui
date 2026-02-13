@@ -25,7 +25,10 @@ function loadUser(): UserState {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored) as UserState;
-      return { name: parsed.name ?? mockUser.name, email: parsed.email ?? mockUser.email };
+      return {
+        name: parsed.name ?? mockUser.name,
+        email: parsed.email ?? mockUser.email,
+      };
     }
   } catch {
     // ignore
@@ -56,6 +59,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }));
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(loadUser());
   }, []);
 

@@ -36,6 +36,10 @@ const FAQ_ITEMS = [
     q: "How do I update my profile or settings?",
     a: "Click your profile in the sidebar to access Profile, Settings, and Subscription. Profile lets you change your name and email (click Save changes to apply). Settings includes appearance, notifications, and data controls—remember to click Save changes when you make edits.",
   },
+  {
+    q: "What keyboard shortcuts are available?",
+    a: "Use the keyboard shortcut to start a new chat: Mac (⌘+Shift+O) or Windows (Ctrl+Shift+O). You can also click the New chat button in the sidebar.",
+  },
 ];
 
 export default function HelpPage() {

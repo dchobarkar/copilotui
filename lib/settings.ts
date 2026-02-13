@@ -5,6 +5,9 @@ export type SettingsState = {
   chatHistory: boolean;
   emailNotifs: boolean;
   pushNotifs: boolean;
+  cookieEssential: boolean;
+  cookieAnalytics: boolean;
+  cookiePersonalization: boolean;
 };
 
 export const DEFAULT_SETTINGS: SettingsState = {
@@ -12,6 +15,9 @@ export const DEFAULT_SETTINGS: SettingsState = {
   chatHistory: true,
   emailNotifs: true,
   pushNotifs: false,
+  cookieEssential: true,
+  cookieAnalytics: false,
+  cookiePersonalization: false,
 };
 
 export function loadSettings(): SettingsState {

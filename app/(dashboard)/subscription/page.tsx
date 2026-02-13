@@ -122,8 +122,10 @@ export default function SubscriptionPage() {
                       </>
                     ) : justUpgraded ? (
                       "Updated!"
+                    ) : plan.id === "free" ? (
+                      "Downgrade"
                     ) : (
-                      plan.id === "free" ? "Downgrade" : "Upgrade"
+                      "Upgrade"
                     )}
                   </button>
                 </div>
