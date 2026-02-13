@@ -232,8 +232,8 @@ export default function ChatIdPage() {
         <ThemeToggle />
       </header>
 
-      <div ref={listRef} className="flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="max-w-3xl mx-auto py-6">
+      <div ref={listRef} className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
+        <div className="max-w-3xl mx-auto py-6 px-4 sm:px-6 min-w-0 w-full">
           {displayMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
               <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">

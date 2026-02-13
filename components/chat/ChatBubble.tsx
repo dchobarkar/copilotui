@@ -75,12 +75,12 @@ function ChatBubbleInner({
     >
       <Avatar role={message.role} />
       <div
-        className={`flex flex-col max-w-[85%] min-w-0 ${
+        className={`flex flex-col w-full max-w-[85%] min-w-0 ${
           isUser ? "items-end" : "items-start"
         }`}
       >
         <div
-          className={`relative rounded-lg px-4 py-2.5 ${
+          className={`relative rounded-lg px-4 py-2.5 min-w-0 overflow-hidden ${
             isUser
               ? "bg-violet-600 text-white dark:bg-slate-700/80 dark:text-slate-100 border border-violet-500/30 dark:border-slate-600/50"
               : "bg-stone-100 dark:bg-linear-to-br dark:from-slate-800/90 dark:to-slate-900/90 text-stone-800 dark:text-slate-200 border border-stone-200 dark:border-slate-700/50 shadow-sm"
@@ -95,7 +95,7 @@ function ChatBubbleInner({
               {content}
             </p>
           ) : (
-            <div className="prose dark:prose-invert max-w-none">
+            <div className="prose dark:prose-invert max-w-none min-w-0 overflow-x-hidden">
               <MarkdownRenderer content={content} />
             </div>
           )}
