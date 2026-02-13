@@ -145,7 +145,6 @@ Built to feel production-ready — not a chatbot widget.
     /settings           # App settings
     /subscription       # Plan management
   /logged-out           # Post-sign-out page
-  /signin               # Sign-in redirect
 
 /components
   /chat                 # ChatBubble, Sidebar, PromptInput, etc.

@@ -4,7 +4,6 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { useChatContext } from "@/contexts/ChatContext";
-import { useSidebar } from "@/contexts/SidebarContext";
 import { useUser } from "@/contexts/UserContext";
 import { THINKING_DELAY_MS, STREAM_SPEED_MS } from "@/data/chat";
 import { getMockResponse } from "@/lib/mockResponses";
@@ -18,8 +17,9 @@ import PageHeader from "@/components/layout/PageHeader";
 const Page = () => {
   const params = useParams();
   const router = useRouter();
-  const id = params.id as string;
-  const convId = id === "new" ? null : id;
+  const idSegments = params.id as string[] | undefined;
+  const id = idSegments?.[0];
+  const convId = !id || id === "new" ? null : id;
 
   const {
     conversations: allConversations,
@@ -31,8 +31,6 @@ const Page = () => {
     removeMessagesAfter,
     renameConversation,
   } = useChatContext();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { setOpen: setSidebarOpen } = useSidebar();
   const { user } = useUser();
 
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
@@ -47,6 +45,15 @@ const Page = () => {
     addFiles: (files: FileList | File[]) => void;
   }>(null);
 
+  // /chat with no id → redirect to /chat/new or /chat/[firstId]
+  useEffect(() => {
+    if (id === undefined) {
+      const first = allConversations[0];
+      router.replace(first ? `/chat/${first.id}` : "/chat/new");
+      return;
+    }
+  }, [id, allConversations, router]);
+
   // Sync URL id with chat context
   useEffect(() => {
     if (id && id !== "new") {
@@ -54,7 +61,7 @@ const Page = () => {
     }
   }, [id, setActiveId]);
 
-  // Clear streaming state when switching to a different existing conversation (not when creating new)
+  // Clear streaming state when switching conversations
   const prevConvIdForClearRef = useRef<string | null>(convId);
   useEffect(() => {
     const prev = prevConvIdForClearRef.current;
@@ -94,7 +101,6 @@ const Page = () => {
     }
   }, []);
 
-  // Use URL id as source of truth for displayed conversation (avoids flash of wrong content when switching)
   const currentConversation =
     id === "new" ? null : allConversations.find((c) => c.id === id);
   const messages = currentConversation?.messages ?? [];
@@ -117,8 +123,6 @@ const Page = () => {
   }, []);
 
   const prevConvIdRef = useRef<string | null>(convId);
-
-  // Scroll when messages change. When switching conversations: defer scroll until after new content paints.
   useEffect(() => {
     if (displayMessages.length === 0) return;
     const prev = prevConvIdRef.current;
@@ -126,7 +130,6 @@ const Page = () => {
     prevConvIdRef.current = convId;
 
     if (isSwitching) {
-      // Defer scroll until DOM has new content - avoids jarring scroll of old content
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const el = listRef.current;
@@ -142,7 +145,6 @@ const Page = () => {
     }
   }, [displayMessages.length, streamingMessageId, convId, scrollToBottom]);
 
-  // Keyboard shortcut: Cmd/Ctrl+Shift+O for new chat
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "O") {
@@ -184,7 +186,6 @@ const Page = () => {
       setStreamingMessageId(tempId);
       setStreamingContent("");
 
-      // Thinking… then word-by-word streaming (plain text during stream = no flicker)
       setTimeout(() => {
         const cleanup = streamText(
           mockResponse,
@@ -354,6 +355,15 @@ const Page = () => {
     }
     setIsEditingTitle(false);
   };
+
+  // /chat with no id: show spinner while redirecting
+  if (id === undefined) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="w-8 h-8 border-2 border-stone-300 dark:border-slate-600 border-t-violet-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <>
