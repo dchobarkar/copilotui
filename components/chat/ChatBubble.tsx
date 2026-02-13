@@ -130,7 +130,7 @@ function ChatBubbleInner({
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
-                      handleEditSubmit();
+                      handleEditSubmit(true);
                     }
                     if (e.key === "Escape") {
                       setEditValue(message.content);
@@ -148,13 +148,6 @@ function ChatBubbleInner({
                     className="px-2 py-1 rounded text-xs bg-white/20 hover:bg-white/30"
                   >
                     Save & regenerate
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleEditSubmit(false)}
-                    className="px-2 py-1 rounded text-xs bg-white/10 hover:bg-white/20"
-                  >
-                    Save
                   </button>
                   <button
                     type="button"
