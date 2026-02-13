@@ -126,7 +126,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
             ))}
           </div>
         )}
-        <div className="flex items-center gap-2 pb-2 px-3">
+        <div className="flex items-center gap-2 py-2 px-3">
         <button
           type="button"
           onClick={handlePaperclipClick}
@@ -148,7 +148,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           placeholder={placeholder}
           disabled={disabled}
           rows={1}
-          className="flex-1 resize-none bg-transparent px-4 py-3 text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none text-sm min-h-11 max-h-50"
+          className="flex-1 resize-none bg-transparent px-4 py-2 text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none text-sm min-h-11 max-h-50 leading-[1.5] self-center"
         />
         {endAction}
         <button
