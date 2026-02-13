@@ -1,26 +1,31 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { PanelLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { useSidebar } from "@/contexts/SidebarContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { clearAccountData } from "@/lib/account";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   loadSettings,
   saveSettings,
   DEFAULT_SETTINGS,
   type SettingsState,
 } from "@/lib/settings";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { PageContent } from "@/components/layout/PageContent";
+import { PageFooterLinks } from "@/components/layout/PageFooterLinks";
+import { CardButton } from "@/components/ui/Card";
+import { SettingsToggleRow } from "@/components/ui/SettingsToggleRow";
+import { Button } from "@/components/ui/Button";
+import { Modal } from "@/components/ui/Modal";
+import { Spinner } from "@/components/ui/Spinner";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
   const { clearAllConversations } = useChatContext();
   const { user } = useUser();
   const { signOut } = useAuth();
@@ -114,63 +119,41 @@ export default function SettingsPage() {
 
   return (
     <>
-      <header className="flex items-center gap-2 px-4 py-3 border-b border-stone-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className={`p-2 rounded-lg text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 ${!sidebarOpen ? "flex" : "hidden"}`}
-          title="Expand sidebar"
-        >
-          <PanelLeft className="w-5 h-5" />
-        </button>
-        <h1 className="flex-1 text-sm font-medium text-stone-700 dark:text-slate-300">
-          Settings
-        </h1>
-        <ThemeToggle />
-      </header>
+      <PageHeader title="Settings" />
 
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-xl mx-auto py-8 px-4">
-          <div className="space-y-8">
-            {/* Account */}
-            <section>
-              <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
-                Account
-              </h2>
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/profile")}
-                  className="w-full block p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors text-left"
-                >
-                  <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                    Profile
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                    Manage your name, email, and avatar
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/subscription")}
-                  className="w-full block p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors text-left"
-                >
-                  <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                    Subscription
-                  </p>
-                  <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                    {plan.name} plan · Manage billing and upgrade
-                  </p>
-                </button>
-              </div>
-            </section>
+      <PageContent maxWidth="xl">
+        <div className="space-y-8">
+          {/* Account */}
+          <section>
+            <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
+              Account
+            </h2>
+            <div className="space-y-2">
+              <CardButton onClick={() => handleNavigate("/profile")}>
+                <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                  Profile
+                </p>
+                <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                  Manage your name, email, and avatar
+                </p>
+              </CardButton>
+              <CardButton onClick={() => handleNavigate("/subscription")}>
+                <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
+                  Subscription
+                </p>
+                <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
+                  {plan.name} plan · Manage billing and upgrade
+                </p>
+              </CardButton>
+            </div>
+          </section>
 
-            {/* Appearance */}
-            <section>
-              <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
-                Appearance
-              </h2>
-              <div className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
+          {/* Appearance */}
+          <section>
+            <h2 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-3">
+              Appearance
+            </h2>
+            <div className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
                 <div>
                   <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
                     Theme
@@ -193,69 +176,26 @@ export default function SettingsPage() {
                 the app to function.
               </p>
               <div className="space-y-2">
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                      Essential cookies
-                    </p>
-                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                      Required for sign-in, preferences, and core features
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={draft.cookieEssential}
-                    onChange={(e) =>
-                      setDraft((d) => ({
-                        ...d,
-                        cookieEssential: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                      Analytics cookies
-                    </p>
-                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                      Help us understand how the product is used
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={draft.cookieAnalytics}
-                    onChange={(e) =>
-                      setDraft((d) => ({
-                        ...d,
-                        cookieAnalytics: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                      Personalization cookies
-                    </p>
-                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                      Customize your experience and suggestions
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={draft.cookiePersonalization}
-                    onChange={(e) =>
-                      setDraft((d) => ({
-                        ...d,
-                        cookiePersonalization: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
+                <SettingsToggleRow
+                  title="Essential cookies"
+                  description="Required for sign-in, preferences, and core features"
+                  checked={draft.cookieEssential}
+                  onChange={(v) => setDraft((d) => ({ ...d, cookieEssential: v }))}
+                />
+                <SettingsToggleRow
+                  title="Analytics cookies"
+                  description="Help us understand how the product is used"
+                  checked={draft.cookieAnalytics}
+                  onChange={(v) => setDraft((d) => ({ ...d, cookieAnalytics: v }))}
+                />
+                <SettingsToggleRow
+                  title="Personalization cookies"
+                  description="Customize your experience and suggestions"
+                  checked={draft.cookiePersonalization}
+                  onChange={(v) =>
+                    setDraft((d) => ({ ...d, cookiePersonalization: v }))
+                  }
+                />
               </div>
             </section>
 
@@ -265,32 +205,16 @@ export default function SettingsPage() {
                 Notifications
               </h2>
               <div className="space-y-2">
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <span className="text-sm text-stone-700 dark:text-slate-300">
-                    Email notifications
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={draft.emailNotifs}
-                    onChange={(e) =>
-                      setDraft((d) => ({ ...d, emailNotifs: e.target.checked }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <span className="text-sm text-stone-700 dark:text-slate-300">
-                    Push notifications
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={draft.pushNotifs}
-                    onChange={(e) =>
-                      setDraft((d) => ({ ...d, pushNotifs: e.target.checked }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
+                <SettingsToggleRow
+                  title="Email notifications"
+                  checked={draft.emailNotifs}
+                  onChange={(v) => setDraft((d) => ({ ...d, emailNotifs: v }))}
+                />
+                <SettingsToggleRow
+                  title="Push notifications"
+                  checked={draft.pushNotifs}
+                  onChange={(v) => setDraft((d) => ({ ...d, pushNotifs: v }))}
+                />
               </div>
             </section>
 
@@ -303,45 +227,18 @@ export default function SettingsPage() {
                 Manage how your data is used and stored.
               </p>
               <div className="space-y-2">
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                      Improve the model for everyone
-                    </p>
-                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                      Allow your conversations to be used for model improvement
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={draft.improveModel}
-                    onChange={(e) =>
-                      setDraft((d) => ({
-                        ...d,
-                        improveModel: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
-                <label className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-stone-700 dark:text-slate-300">
-                      Chat history
-                    </p>
-                    <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5">
-                      Save new conversations to your history
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={draft.chatHistory}
-                    onChange={(e) =>
-                      setDraft((d) => ({ ...d, chatHistory: e.target.checked }))
-                    }
-                    className="rounded border-stone-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
-                  />
-                </label>
+                <SettingsToggleRow
+                  title="Improve the model for everyone"
+                  description="Allow your conversations to be used for model improvement"
+                  checked={draft.improveModel}
+                  onChange={(v) => setDraft((d) => ({ ...d, improveModel: v }))}
+                />
+                <SettingsToggleRow
+                  title="Chat history"
+                  description="Save new conversations to your history"
+                  checked={draft.chatHistory}
+                  onChange={(v) => setDraft((d) => ({ ...d, chatHistory: v }))}
+                />
                 <div className="p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
                   <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
                     Export data
@@ -349,14 +246,14 @@ export default function SettingsPage() {
                   <p className="text-xs text-stone-500 dark:text-slate-400 mb-3">
                     Download your conversation history and account data
                   </p>
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={handleExport}
                     disabled={exporting}
-                    className="px-3 py-1.5 rounded-lg text-sm border border-stone-200 dark:border-slate-700 text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-800 disabled:opacity-50"
                   >
                     {exporting ? "Preparing…" : "Export"}
-                  </button>
+                  </Button>
                 </div>
                 <div className="p-4 rounded-lg bg-white dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700">
                   <p className="text-sm font-medium text-stone-700 dark:text-slate-300 mb-1">
@@ -366,13 +263,13 @@ export default function SettingsPage() {
                     Permanently delete all your conversations. This cannot be
                     undone.
                   </p>
-                  <button
-                    type="button"
+                  <Button
+                    variant="warning"
+                    size="sm"
                     onClick={() => setShowClearConfirm(true)}
-                    className="px-3 py-1.5 rounded-lg text-sm border border-amber-200 dark:border-amber-900/50 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                   >
                     Clear history
-                  </button>
+                  </Button>
                 </div>
               </div>
             </section>
@@ -380,20 +277,10 @@ export default function SettingsPage() {
             {/* Save / Discard */}
             {isDirty && (
               <section className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium"
-                >
-                  Save changes
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDiscard}
-                  className="px-4 py-2 rounded-lg border border-stone-200 dark:border-slate-700 text-stone-700 dark:text-slate-300 text-sm font-medium hover:bg-stone-100 dark:hover:bg-slate-800"
-                >
+                <Button onClick={handleSave}>Save changes</Button>
+                <Button variant="secondary" onClick={handleDiscard}>
                   Discard
-                </button>
+                </Button>
               </section>
             )}
 
@@ -410,192 +297,145 @@ export default function SettingsPage() {
                   Permanently delete your account and all data. This cannot be
                   undone.
                 </p>
-                <button
-                  type="button"
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={handleDeleteStart}
-                  className="px-3 py-1.5 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/30 border border-red-200 dark:border-red-900/50"
                 >
                   Delete account
-                </button>
+                </Button>
               </div>
             </section>
 
-            <div className="pt-4 flex gap-4">
-              <button
-                type="button"
-                onClick={() => handleNavigate("/chat")}
-                className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
-              >
-                ← Back to chat
-              </button>
-              <button
-                type="button"
-                onClick={() => handleNavigate("/help")}
-                className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
-              >
-                Help & Support
-              </button>
-            </div>
+            <PageFooterLinks
+              links={[
+                { href: "/chat", label: "← Back to chat" },
+                { href: "/help", label: "Help & Support" },
+              ]}
+              className="pt-4"
+            />
           </div>
-        </div>
-      </div>
+        </PageContent>
 
       {showClearConfirm && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-          onClick={() => setShowClearConfirm(false)}
-        >
-          <div
-            className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-700 shadow-xl p-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1">
-              Clear chat history
-            </h3>
-            <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-              Are you sure? This will permanently delete all your conversations.
-              This cannot be undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setShowClearConfirm(false)}
-                className="px-3 py-1.5 rounded-lg text-sm text-stone-600 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-800"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  clearAllConversations();
-                  setShowClearConfirm(false);
-                  router.push("/chat/new");
-                }}
-                className="px-3 py-1.5 rounded-lg text-sm bg-amber-600 hover:bg-amber-700 text-white"
-              >
-                Clear history
-              </button>
-            </div>
+        <Modal onClose={() => setShowClearConfirm(false)}>
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1">
+            Clear chat history
+          </h3>
+          <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
+            Are you sure? This will permanently delete all your conversations.
+            This cannot be undone.
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setShowClearConfirm(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="warning"
+              size="sm"
+              onClick={() => {
+                clearAllConversations();
+                setShowClearConfirm(false);
+                router.push("/chat/new");
+              }}
+            >
+              Clear history
+            </Button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete account flow modal */}
       {deleteStep && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-          onClick={
-            deleteStep === "processing" || deleteStep === "done"
-              ? undefined
-              : handleDeleteCancel
+        <Modal
+          onClose={handleDeleteCancel}
+          closeOnOverlayClick={
+            deleteStep !== "processing" && deleteStep !== "done"
           }
         >
-          <div
-            className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-700 shadow-xl p-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {deleteStep === "confirm" && (
-              <>
-                <h3 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1">
-                  Delete account
-                </h3>
-                <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-                  Are you sure? This will permanently delete your account and
-                  all conversation data. This cannot be undone.
-                </p>
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={handleDeleteCancel}
-                    className="px-3 py-1.5 rounded-lg text-sm text-stone-600 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDeleteConfirm}
-                    className="px-3 py-1.5 rounded-lg text-sm bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    Continue
-                  </button>
-                </div>
-              </>
-            )}
-
-            {deleteStep === "email" && (
-              <>
-                <h3 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1">
-                  Confirm your email
-                </h3>
-                <p className="text-sm text-stone-600 dark:text-slate-400 mb-3">
-                  Enter your email address ({user.email}) to confirm account
-                  deletion.
-                </p>
-                <input
-                  type="email"
-                  value={deleteEmail}
-                  onChange={(e) => setDeleteEmail(e.target.value)}
-                  placeholder={user.email}
-                  className="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 text-stone-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500 mb-2"
-                />
-                {deleteError && (
-                  <p className="text-xs text-red-600 dark:text-red-400 mb-2">
-                    {deleteError}
-                  </p>
-                )}
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={handleDeleteCancel}
-                    className="px-3 py-1.5 rounded-lg text-sm text-stone-600 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDeleteSubmit}
-                    className="px-3 py-1.5 rounded-lg text-sm bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    Delete account
-                  </button>
-                </div>
-              </>
-            )}
-
-            {deleteStep === "processing" && (
-              <div className="py-4 text-center">
-                <div className="inline-block w-8 h-8 border-2 border-stone-300 dark:border-slate-600 border-t-violet-600 rounded-full animate-spin mb-3" />
-                <p className="text-sm text-stone-600 dark:text-slate-400">
-                  Deleting your account…
-                </p>
-              </div>
-            )}
-
-            {deleteStep === "done" && (
-              <div className="py-4 text-center">
-                <p className="text-sm font-medium text-stone-900 dark:text-slate-100 mb-1">
-                  Account deleted
-                </p>
-                <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
-                  Your account has been permanently deleted. You have been
-                  signed out.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleDeleteCancel();
-                    clearAccountData();
-                    signOut();
-                    router.push("/logged-out");
-                  }}
-                  className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium"
-                >
+          {deleteStep === "confirm" && (
+            <>
+              <h3 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1">
+                Delete account
+              </h3>
+              <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
+                Are you sure? This will permanently delete your account and
+                all conversation data. This cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={handleDeleteCancel}>
+                  Cancel
+                </Button>
+                <Button variant="danger" size="sm" onClick={handleDeleteConfirm}>
                   Continue
-                </button>
+                </Button>
               </div>
-            )}
-          </div>
-        </div>
+            </>
+          )}
+
+          {deleteStep === "email" && (
+            <>
+              <h3 className="text-sm font-semibold text-stone-900 dark:text-slate-100 mb-1">
+                Confirm your email
+              </h3>
+              <p className="text-sm text-stone-600 dark:text-slate-400 mb-3">
+                Enter your email address ({user.email}) to confirm account
+                deletion.
+              </p>
+              <input
+                type="email"
+                value={deleteEmail}
+                onChange={(e) => setDeleteEmail(e.target.value)}
+                placeholder={user.email}
+                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 text-stone-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500 mb-2"
+              />
+              {deleteError && (
+                <p className="text-xs text-red-600 dark:text-red-400 mb-2">
+                  {deleteError}
+                </p>
+              )}
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={handleDeleteCancel}>
+                  Cancel
+                </Button>
+                <Button variant="danger" size="sm" onClick={handleDeleteSubmit}>
+                  Delete account
+                </Button>
+              </div>
+            </>
+          )}
+
+          {deleteStep === "processing" && (
+            <div className="py-4 text-center">
+              <Spinner className="mx-auto mb-3" />
+              <p className="text-sm text-stone-600 dark:text-slate-400">
+                Deleting your account…
+              </p>
+            </div>
+          )}
+
+          {deleteStep === "done" && (
+            <div className="py-4 text-center">
+              <p className="text-sm font-medium text-stone-900 dark:text-slate-100 mb-1">
+                Account deleted
+              </p>
+              <p className="text-sm text-stone-600 dark:text-slate-400 mb-4">
+                Your account has been permanently deleted. You have been
+                signed out.
+              </p>
+              <Button
+                onClick={() => {
+                  handleDeleteCancel();
+                  clearAccountData();
+                  signOut();
+                  router.push("/logged-out");
+                }}
+              >
+                Continue
+              </Button>
+            </div>
+          )}
+        </Modal>
       )}
     </>
   );

@@ -2,37 +2,18 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { PanelLeft } from "lucide-react";
 
 import { useChatContext } from "@/contexts/ChatContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useUser } from "@/contexts/UserContext";
 import { THINKING_DELAY_MS, STREAM_SPEED_MS } from "@/data/chat";
 import { getMockResponse } from "@/lib/mockResponses";
+import { streamText } from "@/lib/streamText";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import { TypingIndicator } from "@/components/ui/TypingIndicator";
 import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-
-function streamText(
-  text: string,
-  onChunk: (chunk: string) => void,
-  onComplete: () => void,
-) {
-  const words = text.split(/(\s+)/);
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i >= words.length) {
-      clearInterval(interval);
-      onComplete();
-      return;
-    }
-    onChunk(words[i] ?? "");
-    i++;
-  }, STREAM_SPEED_MS);
-  return () => clearInterval(interval);
-}
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export default function ChatIdPage() {
   const params = useParams();
@@ -50,7 +31,7 @@ export default function ChatIdPage() {
     removeMessagesAfter,
     renameConversation,
   } = useChatContext();
-  const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
+  const { setOpen: setSidebarOpen } = useSidebar();
   const { user } = useUser();
 
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
@@ -213,6 +194,7 @@ export default function ChatIdPage() {
             streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
+          STREAM_SPEED_MS,
         );
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
@@ -251,6 +233,7 @@ export default function ChatIdPage() {
             streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
+          STREAM_SPEED_MS,
         );
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
@@ -298,6 +281,7 @@ export default function ChatIdPage() {
             streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
+          STREAM_SPEED_MS,
         );
         streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
@@ -352,17 +336,10 @@ export default function ChatIdPage() {
 
   return (
     <>
-      <header className="flex items-center gap-2 px-4 py-3 border-b border-stone-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className={`p-2 rounded-lg text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 ${!sidebarOpen ? "flex" : "hidden"}`}
-          title="Expand sidebar"
-        >
-          <PanelLeft className="w-5 h-5" />
-        </button>
-        <div className="flex-1 min-w-0 flex items-center">
-          {isEditingTitle && convId ? (
+      <PageHeader
+        title={displayTitle}
+        children={
+          isEditingTitle && convId ? (
             <input
               type="text"
               value={editTitleValue}
@@ -386,10 +363,9 @@ export default function ChatIdPage() {
             >
               {displayTitle}
             </button>
-          )}
-        </div>
-        <ThemeToggle />
-      </header>
+          )
+        }
+      />
 
       <div className="flex-1 min-h-0 min-w-0 relative">
         <div
