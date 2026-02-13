@@ -108,9 +108,11 @@ function ChatBubbleInner({
     >
       <Avatar role={message.role} />
       <div
-        className={`flex flex-col w-full max-w-[85%] min-w-0 ${
-          isUser ? "items-end" : "items-start"
-        }`}
+        className={`flex flex-col w-full min-w-0 ${
+          isUser && isEditing
+            ? "max-w-[95%] min-w-[min(400px,95%)]"
+            : "max-w-[85%]"
+        } ${isUser ? "items-end" : "items-start"}`}
       >
         <div
           className={`relative rounded-lg px-4 py-2.5 min-w-0 overflow-hidden ${
@@ -135,7 +137,7 @@ function ChatBubbleInner({
                       setIsEditing(false);
                     }
                   }}
-                  className="w-full min-h-[60px] px-3 py-2 rounded bg-white/10 dark:bg-slate-800/50 border border-white/20 dark:border-slate-600/50 text-sm text-inherit placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 resize-none"
+                  className="w-full min-h-[200px] min-w-[320px] px-3 py-2 rounded bg-white/10 dark:bg-slate-800/50 border border-white/20 dark:border-slate-600/50 text-sm text-inherit placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 resize-y"
                   placeholder="Edit message..."
                   autoFocus
                 />
