@@ -1,7 +1,7 @@
 // Mock user data for demo
 export const mockUser = {
   id: "user-1",
-  name: "Demo User",
-  email: "demo@example.com",
+  name: "James Mitchell",
+  email: "james.mitchell@email.com",
   avatar: null, // Use initials fallback
 };
