@@ -14,7 +14,8 @@ import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-const STREAM_SPEED = 25;
+const STREAM_CHUNK_MS = 45;
+const WORDS_PER_CHUNK = 2;
 
 function streamText(
   text: string,
@@ -23,16 +24,23 @@ function streamText(
 ) {
   const words = text.split(/(\s+)/);
   let i = 0;
-  const interval = setInterval(() => {
-    if (i >= words.length) {
-      clearInterval(interval);
-      onComplete();
+  let cancelled = false;
+
+  function scheduleNext() {
+    if (cancelled || i >= words.length) {
+      if (!cancelled) onComplete();
       return;
     }
-    onChunk(words[i] ?? "");
-    i++;
-  }, STREAM_SPEED);
-  return () => clearInterval(interval);
+    const chunk = words.slice(i, i + WORDS_PER_CHUNK).join("");
+    i += WORDS_PER_CHUNK;
+    onChunk(chunk);
+    setTimeout(scheduleNext, STREAM_CHUNK_MS);
+  }
+
+  scheduleNext();
+  return () => {
+    cancelled = true;
+  };
 }
 
 export default function ChatIdPage() {
@@ -102,13 +110,31 @@ export default function ChatIdPage() {
       ]
     : messages;
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  const scrollToBottom = useCallback(
+    (instant = false) => {
+      messagesEndRef.current?.scrollIntoView({
+        behavior: instant ? "auto" : "smooth",
+        block: "end",
+      });
+    },
+    [],
+  );
+
+  const isStreaming = !!streamingMessageId;
+  const lastScrollRef = useRef(0);
+  const scrollThrottleMs = 80;
 
   useEffect(() => {
-    scrollToBottom();
-  }, [displayMessages.length, streamingContent, scrollToBottom]);
+    const now = Date.now();
+    if (isStreaming) {
+      if (now - lastScrollRef.current >= scrollThrottleMs) {
+        lastScrollRef.current = now;
+        scrollToBottom(true);
+      }
+    } else {
+      scrollToBottom(false);
+    }
+  }, [displayMessages.length, streamingContent, isStreaming, scrollToBottom]);
 
   // Keyboard shortcut: Cmd/Ctrl+Shift+O for new chat
   useEffect(() => {
@@ -135,7 +161,7 @@ export default function ChatIdPage() {
 
       addMessage("user", text, targetId);
 
-      const mockResponse = getMockResponse();
+      const mockResponse = getMockResponse(text);
       const tempId = `msg-stream-${Date.now()}`;
       setStreamingMessageId(tempId);
       setStreamingContent("");
@@ -185,6 +211,9 @@ export default function ChatIdPage() {
                 Start a conversation or try a prompt:
               </p>
               <PromptTemplates onSelect={handleSend} />
+              <p className="mt-6 text-xs text-stone-400 dark:text-slate-500">
+                Simulated responses · Concept demo
+              </p>
             </div>
           ) : (
             <>
@@ -232,6 +261,9 @@ export default function ChatIdPage() {
             disabled={!!streamingMessageId}
             placeholder="Message CopilotUI…"
           />
+          <p className="mt-2 text-center text-xs text-stone-400 dark:text-slate-500">
+            Simulated responses · No LLM
+          </p>
         </div>
       </div>
     </>
