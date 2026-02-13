@@ -14,8 +14,8 @@ import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-const STREAM_CHUNK_MS = 45;
-const WORDS_PER_CHUNK = 2;
+const STREAM_SPEED = 25;
+const THINKING_DELAY_MS = 400;
 
 function streamText(
   text: string,
@@ -24,23 +24,16 @@ function streamText(
 ) {
   const words = text.split(/(\s+)/);
   let i = 0;
-  let cancelled = false;
-
-  function scheduleNext() {
-    if (cancelled || i >= words.length) {
-      if (!cancelled) onComplete();
+  const interval = setInterval(() => {
+    if (i >= words.length) {
+      clearInterval(interval);
+      onComplete();
       return;
     }
-    const chunk = words.slice(i, i + WORDS_PER_CHUNK).join("");
-    i += WORDS_PER_CHUNK;
-    onChunk(chunk);
-    setTimeout(scheduleNext, STREAM_CHUNK_MS);
-  }
-
-  scheduleNext();
-  return () => {
-    cancelled = true;
-  };
+    onChunk(words[i] ?? "");
+    i++;
+  }, STREAM_SPEED);
+  return () => clearInterval(interval);
 }
 
 export default function ChatIdPage() {
@@ -102,43 +95,41 @@ export default function ChatIdPage() {
 
   const convId = id === "new" ? null : id;
   const messages = (id === "new" ? null : activeConversation)?.messages ?? [];
-  const displayMessages = streamingMessageId
-    ? [
-        ...messages,
-        {
-          id: streamingMessageId,
-          role: "assistant" as const,
-          content: streamingContent,
-          timestamp: new Date(),
-        },
-      ]
-    : messages;
+  const displayMessages =
+    streamingMessageId && streamingContent
+      ? [
+          ...messages,
+          {
+            id: streamingMessageId,
+            role: "assistant" as const,
+            content: streamingContent,
+            timestamp: new Date(),
+          },
+        ]
+      : messages;
 
-  const scrollToBottom = useCallback(
-    (instant = false) => {
-      messagesEndRef.current?.scrollIntoView({
-        behavior: instant ? "auto" : "smooth",
-        block: "end",
-      });
-    },
-    [],
-  );
+  const scrollToBottom = useCallback((instant = false) => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: instant ? "auto" : "smooth",
+    });
+  }, []);
 
-  const isStreaming = !!streamingMessageId;
   const lastScrollRef = useRef(0);
-  const scrollThrottleMs = 80;
+  const SCROLL_THROTTLE_MS = 80;
 
   useEffect(() => {
-    const now = Date.now();
+    if (displayMessages.length === 0) return;
+    const isStreaming = !!streamingMessageId;
     if (isStreaming) {
-      if (now - lastScrollRef.current >= scrollThrottleMs) {
+      const now = Date.now();
+      if (now - lastScrollRef.current >= SCROLL_THROTTLE_MS) {
         lastScrollRef.current = now;
-        scrollToBottom(true);
+        requestAnimationFrame(() => scrollToBottom(true));
       }
     } else {
       scrollToBottom(false);
     }
-  }, [displayMessages.length, streamingContent, isStreaming, scrollToBottom]);
+  }, [displayMessages.length, streamingContent, streamingMessageId, scrollToBottom]);
 
   // Keyboard shortcut: Cmd/Ctrl+Shift+O for new chat
   useEffect(() => {
@@ -181,15 +172,19 @@ export default function ChatIdPage() {
       setStreamingMessageId(tempId);
       setStreamingContent("");
 
-      streamText(
-        mockResponse,
-        (chunk) => setStreamingContent((prev) => prev + chunk),
-        () => {
-          addMessage("assistant", mockResponse, targetId);
-          setStreamingMessageId(null);
-          setStreamingContent("");
-        },
-      );
+      // Show "Thinking…" for a moment before streaming starts
+      setTimeout(() => {
+        streamText(
+          mockResponse,
+          (chunk) => setStreamingContent((prev) => prev + chunk),
+          () => {
+            addMessage("assistant", mockResponse, targetId);
+            setStreamingMessageId(null);
+            setStreamingContent("");
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          },
+        );
+      }, THINKING_DELAY_MS);
     },
     [convId, startNewChat, addMessage, router],
   );

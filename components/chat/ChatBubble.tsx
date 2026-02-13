@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Message } from "@/lib/types";
 import { Avatar } from "@/components/ui/Avatar";
 import { MarkdownRenderer } from "./MarkdownRenderer";
@@ -16,7 +17,7 @@ function formatTime(date: Date) {
   });
 }
 
-export function ChatBubble({
+function ChatBubbleInner({
   message,
   isStreaming = false,
   streamingContent,
@@ -33,7 +34,7 @@ export function ChatBubble({
 
   return (
     <div
-      className={`group flex gap-3 px-4 py-3 animate-fade-in ${
+      className={`group flex gap-3 px-4 py-3 ${!isStreaming ? "animate-fade-in" : ""} ${
         isUser ? "flex-row-reverse" : ""
       }`}
     >
@@ -51,6 +52,10 @@ export function ChatBubble({
           }`}
         >
           {isUser ? (
+            <p className="text-sm whitespace-pre-wrap wrap-break-word">
+              {content}
+            </p>
+          ) : isStreaming ? (
             <p className="text-sm whitespace-pre-wrap wrap-break-word">
               {content}
             </p>
@@ -76,3 +81,5 @@ export function ChatBubble({
     </div>
   );
 }
+
+export const ChatBubble = memo(ChatBubbleInner);
