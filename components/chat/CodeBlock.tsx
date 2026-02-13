@@ -7,20 +7,12 @@ import { ghcolors } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Copy, Check } from "lucide-react";
 
 import { useTheme } from "@/hooks/useTheme";
+import { LANGUAGE_MAP } from "@/data/codeBlock";
 
 interface CodeBlockProps {
   code: string;
   language?: string;
 }
-
-const LANGUAGE_MAP: Record<string, string> = {
-  js: "javascript",
-  ts: "typescript",
-  tsx: "tsx",
-  jsx: "jsx",
-  sh: "bash",
-  bash: "bash",
-};
 
 export function CodeBlock({ code, language = "text" }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);

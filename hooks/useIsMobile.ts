@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-const MOBILE_BREAKPOINT = 768; // matches Tailwind md
+import { MOBILE_BREAKPOINT } from "@/data/breakpoints";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);

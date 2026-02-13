@@ -3,15 +3,14 @@
 import { useState, useCallback, useEffect } from "react";
 
 import { mockConversations } from "@/data/conversations";
+import { STORAGE_KEYS } from "@/data/constants";
 import { generateUUID } from "@/lib/uuid";
 import type { Conversation, Message } from "@/lib/types";
-
-const STORAGE_KEY = "copilotui-conversations";
 
 function loadConversations(): Conversation[] {
   if (typeof window === "undefined") return mockConversations;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.conversations);
     if (!raw) return mockConversations;
     const parsed = JSON.parse(raw) as Conversation[];
     if (!Array.isArray(parsed) || parsed.length === 0) return mockConversations;
@@ -32,7 +31,7 @@ function loadConversations(): Conversation[] {
 function saveConversations(conversations: Conversation[]) {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
+    localStorage.setItem(STORAGE_KEYS.conversations, JSON.stringify(conversations));
   } catch {
     // ignore
   }

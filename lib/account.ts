@@ -1,7 +1,4 @@
-import { SETTINGS_STORAGE_KEY } from "./settings";
-
-const USER_STORAGE_KEY = "copilotui-user";
-const SUBSCRIPTION_STORAGE_KEY = "copilotui-subscription";
+import { STORAGE_KEYS } from "@/data/constants";
 
 /**
  * Clears all account-related data from localStorage.
@@ -10,9 +7,9 @@ const SUBSCRIPTION_STORAGE_KEY = "copilotui-subscription";
 export function clearAccountData() {
   if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem(USER_STORAGE_KEY);
-    localStorage.removeItem(SETTINGS_STORAGE_KEY);
-    localStorage.removeItem(SUBSCRIPTION_STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEYS.user);
+    localStorage.removeItem(STORAGE_KEYS.settings);
+    localStorage.removeItem(STORAGE_KEYS.subscription);
   } catch {
     // ignore
   }

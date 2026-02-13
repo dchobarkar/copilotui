@@ -1,12 +1,4 @@
-const TEMPLATES = [
-  "Explain how React hooks work",
-  "Write an API schema for a todo app",
-  "Generate a dashboard UI layout",
-  "Explain WebSocket handshake",
-  "What's the best approach for state management?",
-  "Summarize this text",
-  "Explain JWT authentication",
-];
+import { PROMPT_TEMPLATES } from "@/data/promptTemplates";
 
 interface PromptTemplatesProps {
   onSelect: (text: string) => void;
@@ -19,7 +11,7 @@ export function PromptTemplates({
 }: PromptTemplatesProps) {
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
-      {TEMPLATES.map((template) => (
+      {PROMPT_TEMPLATES.map((template) => (
         <button
           key={template}
           type="button"

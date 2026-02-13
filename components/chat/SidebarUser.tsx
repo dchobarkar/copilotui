@@ -7,6 +7,7 @@ import { User, Settings, HelpCircle, CreditCard, LogOut, ChevronUp, Sparkles } f
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { STORAGE_KEYS } from "@/data/constants";
 
 export function SidebarUser() {
   const { user } = useUser();
@@ -129,7 +130,7 @@ export function SidebarUser() {
             onClick={() => {
               setIsOpen(false);
               if (typeof sessionStorage !== "undefined") {
-                sessionStorage.setItem("copilotui-just-signed-out", "true");
+                sessionStorage.setItem(STORAGE_KEYS.justSignedOut, "true");
               }
               signOut();
               router.push("/logged-out");

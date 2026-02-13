@@ -8,9 +8,8 @@ import {
   useEffect,
 } from "react";
 
-import { mockUser } from "@/lib/user";
-
-const STORAGE_KEY = "copilotui-user";
+import { mockUser } from "@/data/user";
+import { STORAGE_KEYS } from "@/data/constants";
 
 type UserState = {
   name: string;
@@ -22,7 +21,7 @@ function loadUser(): UserState {
     return { name: mockUser.name, email: mockUser.email };
   }
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEYS.user);
     if (stored) {
       const parsed = JSON.parse(stored) as UserState;
       return {
@@ -39,7 +38,7 @@ function loadUser(): UserState {
 function saveUser(user: UserState) {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
   } catch {
     // ignore
   }

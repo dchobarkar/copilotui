@@ -7,15 +7,13 @@ import { PanelLeft } from "lucide-react";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useUser } from "@/contexts/UserContext";
+import { THINKING_DELAY_MS, STREAM_SPEED_MS } from "@/data/chat";
 import { getMockResponse } from "@/lib/mockResponses";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import { TypingIndicator } from "@/components/ui/TypingIndicator";
 import { PromptInput } from "@/components/chat/PromptInput";
 import { PromptTemplates } from "@/components/chat/PromptTemplates";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-
-const THINKING_DELAY_MS = 400;
-const STREAM_SPEED_MS = 35;
 
 function streamText(
   text: string,

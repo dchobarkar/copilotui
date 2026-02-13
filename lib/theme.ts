@@ -1,3 +1,5 @@
 export type Theme = "light" | "dark";
 
-export const THEME_STORAGE_KEY = "copilotui-theme";
+import { STORAGE_KEYS } from "@/data/constants";
+
+export const THEME_STORAGE_KEY = STORAGE_KEYS.theme;

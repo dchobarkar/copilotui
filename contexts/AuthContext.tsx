@@ -8,12 +8,12 @@ import {
   useEffect,
 } from "react";
 
-const AUTH_STORAGE_KEY = "copilotui-auth";
+import { STORAGE_KEYS } from "@/data/constants";
 
 function loadAuth(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return localStorage.getItem(AUTH_STORAGE_KEY) === "true";
+    return localStorage.getItem(STORAGE_KEYS.auth) === "true";
   } catch {
     return false;
   }
@@ -23,9 +23,9 @@ function saveAuth(signedIn: boolean) {
   if (typeof window === "undefined") return;
   try {
     if (signedIn) {
-      localStorage.setItem(AUTH_STORAGE_KEY, "true");
+      localStorage.setItem(STORAGE_KEYS.auth, "true");
     } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEYS.auth);
     }
   } catch {
     // ignore
