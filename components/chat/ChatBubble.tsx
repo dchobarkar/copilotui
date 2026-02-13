@@ -9,6 +9,9 @@ interface ChatBubbleProps {
   isStreaming?: boolean;
   streamingContent?: string;
   onRegenerate?: (messageId: string) => void;
+  onDelete?: (messageId: string) => void;
+  onEdit?: (messageId: string, newContent: string) => void;
+  onEditAndRegenerate?: (messageId: string, newContent: string) => void;
 }
 
 function formatTime(date: Date) {
@@ -23,6 +26,9 @@ function ChatBubbleInner({
   isStreaming = false,
   streamingContent,
   onRegenerate,
+  onDelete,
+  onEdit,
+  onEditAndRegenerate,
 }: ChatBubbleProps) {
   const isUser = message.role === "user";
   const content =
@@ -32,6 +38,8 @@ function ChatBubbleInner({
 
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(message.content);
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(content);
@@ -46,6 +54,31 @@ function ChatBubbleInner({
   const handleDislike = useCallback(() => {
     setFeedback((prev) => (prev === "dislike" ? null : "dislike"));
   }, []);
+
+  const handleEditSubmit = useCallback(
+    (andRegenerate = false) => {
+      const trimmed = editValue.trim();
+      if (!trimmed) {
+        setEditValue(message.content);
+        setIsEditing(false);
+        return;
+      }
+      if (andRegenerate && onEditAndRegenerate) {
+        onEditAndRegenerate(message.id, trimmed);
+      } else if (trimmed !== message.content && onEdit) {
+        onEdit(message.id, trimmed);
+      } else {
+        setEditValue(message.content);
+      }
+      setIsEditing(false);
+    },
+    [editValue, message.content, message.id, onEdit, onEditAndRegenerate],
+  );
+
+  const handleEditStart = useCallback(() => {
+    setEditValue(message.content);
+    setIsEditing(true);
+  }, [message.content]);
 
   const handleShare = useCallback(async () => {
     const shareData = {
@@ -87,9 +120,57 @@ function ChatBubbleInner({
           }`}
         >
           {isUser ? (
-            <p className="text-sm whitespace-pre-wrap wrap-break-word">
-              {content}
-            </p>
+            isEditing ? (
+              <div className="space-y-2">
+                <textarea
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleEditSubmit();
+                    }
+                    if (e.key === "Escape") {
+                      setEditValue(message.content);
+                      setIsEditing(false);
+                    }
+                  }}
+                  className="w-full min-h-[60px] px-3 py-2 rounded bg-white/10 dark:bg-slate-800/50 border border-white/20 dark:border-slate-600/50 text-sm text-inherit placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 resize-none"
+                  placeholder="Edit message..."
+                  autoFocus
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleEditSubmit(true)}
+                    className="px-2 py-1 rounded text-xs bg-white/20 hover:bg-white/30"
+                  >
+                    Save & regenerate
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleEditSubmit(false)}
+                    className="px-2 py-1 rounded text-xs bg-white/10 hover:bg-white/20"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditValue(message.content);
+                      setIsEditing(false);
+                    }}
+                    className="px-2 py-1 rounded text-xs text-white/80 hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm whitespace-pre-wrap wrap-break-word">
+                {content}
+              </p>
+            )
           ) : isStreaming ? (
             <p className="text-sm whitespace-pre-wrap wrap-break-word">
               {content}
@@ -103,11 +184,24 @@ function ChatBubbleInner({
             <MessageActions
               onCopy={handleCopy}
               copied={copied}
-              onRegenerate={onRegenerate ? () => onRegenerate(message.id) : undefined}
+              onRegenerate={
+                onRegenerate ? () => onRegenerate(message.id) : undefined
+              }
               onLike={handleLike}
               onDislike={handleDislike}
               feedback={feedback}
               onShare={handleShare}
+              onDelete={
+                onDelete ? () => onDelete(message.id) : undefined
+              }
+            />
+          )}
+          {isUser && !isEditing && (
+            <MessageActions
+              onCopy={handleCopy}
+              copied={copied}
+              onEdit={onEdit ? handleEditStart : undefined}
+              onDelete={onDelete ? () => onDelete(message.id) : undefined}
             />
           )}
         </div>

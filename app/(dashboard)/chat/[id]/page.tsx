@@ -40,14 +40,17 @@ export default function ChatIdPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const convId = id === "new" ? null : id;
 
   const {
     conversations: allConversations,
-    activeConversation,
     setActiveId,
     startNewChat,
     addMessage,
+    updateMessage,
     removeMessage,
+    removeMessagesAfter,
+    renameConversation,
   } = useChatContext();
   const { isOpen: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
   const { user } = useUser();
@@ -56,6 +59,7 @@ export default function ChatIdPage() {
     null,
   );
   const [streamingContent, setStreamingContent] = useState("");
+  const streamAbortRef = useRef<(() => void) | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -67,6 +71,19 @@ export default function ChatIdPage() {
       setActiveId(id);
     }
   }, [id, setActiveId]);
+
+  // Clear streaming state when switching to a different existing conversation (not when creating new)
+  const prevConvIdForClearRef = useRef<string | null>(convId);
+  useEffect(() => {
+    const prev = prevConvIdForClearRef.current;
+    prevConvIdForClearRef.current = convId;
+    if (prev != null && convId != null && prev !== convId) {
+      streamAbortRef.current?.();
+      setStreamingMessageId(null);
+      setStreamingContent("");
+      streamAbortRef.current = null;
+    }
+  }, [convId]);
 
   // Redirect if conversation doesn't exist (e.g. deleted)
   useEffect(() => {
@@ -94,8 +111,10 @@ export default function ChatIdPage() {
     }
   }, []);
 
-  const convId = id === "new" ? null : id;
-  const messages = (id === "new" ? null : activeConversation)?.messages ?? [];
+  // Use URL id as source of truth for displayed conversation (avoids flash of wrong content when switching)
+  const currentConversation =
+    id === "new" ? null : allConversations.find((c) => c.id === id);
+  const messages = currentConversation?.messages ?? [];
   const displayMessages = streamingMessageId
     ? [
         ...messages,
@@ -108,15 +127,37 @@ export default function ChatIdPage() {
       ]
     : messages;
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = useCallback((smooth = true) => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: smooth ? "smooth" : "auto",
+    });
   }, []);
 
-  // Scroll only when message count changes or streaming completes—never during streaming (prevents flicker)
+  const prevConvIdRef = useRef<string | null>(convId);
+
+  // Scroll when messages change. When switching conversations: defer scroll until after new content paints.
   useEffect(() => {
     if (displayMessages.length === 0) return;
-    scrollToBottom();
-  }, [displayMessages.length, streamingMessageId, scrollToBottom]);
+    const prev = prevConvIdRef.current;
+    const isSwitching = prev != null && convId != null && prev !== convId;
+    prevConvIdRef.current = convId;
+
+    if (isSwitching) {
+      // Defer scroll until DOM has new content - avoids jarring scroll of old content
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const el = listRef.current;
+          if (el) {
+            el.scrollTop = el.scrollHeight;
+          } else {
+            scrollToBottom(false);
+          }
+        });
+      });
+    } else {
+      scrollToBottom(true);
+    }
+  }, [displayMessages.length, streamingMessageId, convId, scrollToBottom]);
 
   // Keyboard shortcut: Cmd/Ctrl+Shift+O for new chat
   useEffect(() => {
@@ -156,12 +197,13 @@ export default function ChatIdPage() {
           : "What can you help with?");
       const mockResponse = getMockResponse(promptForMock);
       const tempId = `stream-${Date.now()}`;
+      streamAbortRef.current?.();
       setStreamingMessageId(tempId);
       setStreamingContent("");
 
       // Thinking… then word-by-word streaming (plain text during stream = no flicker)
       setTimeout(() => {
-        streamText(
+        const cleanup = streamText(
           mockResponse,
           (chunk) => setStreamingContent((prev) => prev + chunk),
           () => {
@@ -170,9 +212,11 @@ export default function ChatIdPage() {
             });
             setStreamingMessageId(null);
             setStreamingContent("");
+            streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
         );
+        streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
     },
     [convId, startNewChat, addMessage, router],
@@ -180,8 +224,8 @@ export default function ChatIdPage() {
 
   const handleRegenerate = useCallback(
     (messageId: string) => {
-      if (!convId || !activeConversation || streamingMessageId) return;
-      const msgs = activeConversation.messages;
+      if (!convId || !currentConversation || streamingMessageId) return;
+      const msgs = currentConversation.messages;
       const idx = msgs.findIndex((m) => m.id === messageId);
       if (idx < 0 || msgs[idx]?.role !== "assistant") return;
       const prevUser = msgs
@@ -190,13 +234,14 @@ export default function ChatIdPage() {
         .find((m) => m.role === "user");
       if (!prevUser) return;
       removeMessage(messageId, convId);
-      const prompt = prevUser.content.replace(/\n\n\[Attached:.*\]$/s, "").trim();
+      streamAbortRef.current?.();
+      const prompt = prevUser.content.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
       const mockResponse = getMockResponse(prompt || "What can you help with?");
       const tempId = `stream-${Date.now()}`;
       setStreamingMessageId(tempId);
       setStreamingContent("");
       setTimeout(() => {
-        streamText(
+        const cleanup = streamText(
           mockResponse,
           (chunk) => setStreamingContent((prev) => prev + chunk),
           () => {
@@ -205,13 +250,107 @@ export default function ChatIdPage() {
             });
             setStreamingMessageId(null);
             setStreamingContent("");
+            streamAbortRef.current = null;
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           },
         );
+        streamAbortRef.current = cleanup;
       }, THINKING_DELAY_MS);
     },
-    [convId, activeConversation, streamingMessageId, removeMessage, addMessage],
+    [convId, currentConversation, streamingMessageId, removeMessage, addMessage],
   );
+
+  const handleDeleteMessage = useCallback(
+    (messageId: string) => {
+      if (!convId || streamingMessageId) return;
+      removeMessage(messageId, convId);
+    },
+    [convId, streamingMessageId, removeMessage],
+  );
+
+  const handleEditMessage = useCallback(
+    (messageId: string, newContent: string) => {
+      if (!convId) return;
+      updateMessage(messageId, newContent, convId);
+    },
+    [convId, updateMessage],
+  );
+
+  const handleEditAndRegenerate = useCallback(
+    (messageId: string, newContent: string) => {
+      if (!convId || !currentConversation || streamingMessageId) return;
+      updateMessage(messageId, newContent, convId);
+      removeMessagesAfter(messageId, convId);
+      const prompt = newContent.replace(/\n\n\[Attached:[\s\S]*\]\s*$/, "").trim();
+      const mockResponse = getMockResponse(prompt || "What can you help with?");
+      const tempId = `stream-${Date.now()}`;
+      setStreamingMessageId(tempId);
+      setStreamingContent("");
+      setTimeout(() => {
+        streamAbortRef.current?.();
+        const cleanup = streamText(
+          mockResponse,
+          (chunk) => setStreamingContent((prev) => prev + chunk),
+          () => {
+            addMessage("assistant", mockResponse, convId, {
+              messageId: tempId,
+            });
+            setStreamingMessageId(null);
+            setStreamingContent("");
+            streamAbortRef.current = null;
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          },
+        );
+        streamAbortRef.current = cleanup;
+      }, THINKING_DELAY_MS);
+    },
+    [convId, currentConversation, streamingMessageId, updateMessage, removeMessagesAfter, addMessage],
+  );
+
+  const handleStopGeneration = useCallback(() => {
+    streamAbortRef.current?.();
+    if (streamingMessageId && streamingContent && convId) {
+      addMessage("assistant", streamingContent, convId, {
+        messageId: streamingMessageId,
+      });
+    }
+    setStreamingMessageId(null);
+    setStreamingContent("");
+    streamAbortRef.current = null;
+  }, [streamingMessageId, streamingContent, convId, addMessage]);
+
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editTitleValue, setEditTitleValue] = useState("");
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const check = () => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      setShowScrollToBottom(scrollHeight - scrollTop - clientHeight > 100);
+    };
+    el.addEventListener("scroll", check, { passive: true });
+    check();
+    return () => el.removeEventListener("scroll", check);
+  }, [displayMessages.length]);
+
+  const displayTitle =
+    id === "new" ? "New chat" : (currentConversation?.title ?? "New chat");
+
+  const handleTitleEditStart = () => {
+    if (id === "new" || !convId) return;
+    setEditTitleValue(displayTitle);
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleEditSubmit = () => {
+    const trimmed = editTitleValue.trim();
+    if (trimmed && convId) {
+      renameConversation(convId, trimmed);
+    }
+    setIsEditingTitle(false);
+  };
 
   return (
     <>
@@ -224,16 +363,42 @@ export default function ChatIdPage() {
         >
           <PanelLeft className="w-5 h-5" />
         </button>
-        <h1 className="flex-1 text-sm font-medium text-stone-700 dark:text-slate-300 truncate">
-          {id === "new"
-            ? "New chat"
-            : (activeConversation?.title ?? "New chat")}
-        </h1>
+        <div className="flex-1 min-w-0 flex items-center">
+          {isEditingTitle && convId ? (
+            <input
+              type="text"
+              value={editTitleValue}
+              onChange={(e) => setEditTitleValue(e.target.value)}
+              onBlur={handleTitleEditSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleTitleEditSubmit();
+                if (e.key === "Escape") {
+                  setEditTitleValue(displayTitle);
+                  setIsEditingTitle(false);
+                }
+              }}
+              className="w-full bg-transparent border-b border-violet-500/50 text-sm font-medium text-stone-700 dark:text-slate-300 focus:outline-none py-0.5"
+              autoFocus
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={handleTitleEditStart}
+              className="text-left w-full truncate text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-stone-900 dark:hover:text-slate-100 transition-colors"
+            >
+              {displayTitle}
+            </button>
+          )}
+        </div>
         <ThemeToggle />
       </header>
 
-      <div ref={listRef} className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-        <div className="max-w-3xl mx-auto py-6 px-4 sm:px-6 min-w-0 w-full">
+      <div className="flex-1 min-h-0 min-w-0 relative">
+        <div
+          ref={listRef}
+          className="h-full min-h-0 overflow-y-auto overflow-x-hidden"
+        >
+          <div className="max-w-3xl mx-auto py-6 px-4 sm:px-6 min-w-0 w-full">
           {displayMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
               <p className="text-stone-700 dark:text-slate-300 text-base font-medium mb-1">
@@ -264,6 +429,13 @@ export default function ChatIdPage() {
                   onRegenerate={
                     msg.role === "assistant" ? handleRegenerate : undefined
                   }
+                  onDelete={handleDeleteMessage}
+                  onEdit={
+                    msg.role === "user" ? handleEditMessage : undefined
+                  }
+                  onEditAndRegenerate={
+                    msg.role === "user" ? handleEditAndRegenerate : undefined
+                  }
                 />
               ))}
               {streamingMessageId && !streamingContent && (
@@ -277,7 +449,17 @@ export default function ChatIdPage() {
               <div ref={messagesEndRef} />
             </>
           )}
+          </div>
         </div>
+        {showScrollToBottom && (
+          <button
+            type="button"
+            onClick={() => scrollToBottom()}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-stone-200/90 dark:bg-slate-700/90 hover:bg-stone-300 dark:hover:bg-slate-600 text-stone-700 dark:text-slate-200 text-sm font-medium shadow-lg transition-colors z-10"
+          >
+            Scroll to bottom
+          </button>
+        )}
       </div>
 
       <div
@@ -299,6 +481,15 @@ export default function ChatIdPage() {
             disabled={!!streamingMessageId}
             placeholder="Message CopilotUI…"
           />
+          {streamingMessageId && (
+            <button
+              type="button"
+              onClick={handleStopGeneration}
+              className="mt-2 mx-auto block px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/90 hover:bg-red-600 text-white transition-colors"
+            >
+              Stop generating
+            </button>
+          )}
           <p className="mt-2 text-center text-xs text-stone-400 dark:text-slate-500">
             Simulated responses · No LLM
           </p>

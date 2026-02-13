@@ -1,18 +1,60 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import { mockConversations } from "@/data/conversations";
 import { generateUUID } from "@/lib/uuid";
 import type { Conversation, Message } from "@/lib/types";
 
+const STORAGE_KEY = "copilotui-conversations";
+
+function loadConversations(): Conversation[] {
+  if (typeof window === "undefined") return mockConversations;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return mockConversations;
+    const parsed = JSON.parse(raw) as Conversation[];
+    if (!Array.isArray(parsed) || parsed.length === 0) return mockConversations;
+    return parsed.map((c) => ({
+      ...c,
+      messages: (c.messages ?? []).map((m) => ({
+        ...m,
+        timestamp: new Date(m.timestamp),
+      })),
+      createdAt: new Date(c.createdAt),
+      updatedAt: new Date(c.updatedAt),
+    }));
+  } catch {
+    return mockConversations;
+  }
+}
+
+function saveConversations(conversations: Conversation[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
+  } catch {
+    // ignore
+  }
+}
+
 export function useChat() {
-  const [conversations, setConversations] =
-    useState<Conversation[]>(mockConversations);
+  const [conversations, setConversations] = useState<Conversation[]>(
+    () => mockConversations,
+  );
   const [activeId, setActiveId] = useState<string | null>(
-    mockConversations[0]?.id ?? null,
+    () => mockConversations[0]?.id ?? null,
   );
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const loaded = loadConversations();
+    setConversations(loaded);
+  }, []);
+
+  useEffect(() => {
+    saveConversations(conversations);
+  }, [conversations]);
 
   const activeConversation = conversations.find((c) => c.id === activeId);
 
@@ -72,6 +114,31 @@ export function useChat() {
     [activeId],
   );
 
+  const updateMessage = useCallback(
+    (
+      messageId: string,
+      content: string,
+      conversationId?: string | null,
+    ) => {
+      const targetId = conversationId ?? activeId;
+      if (!targetId) return;
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === targetId
+            ? {
+                ...c,
+                messages: c.messages.map((m) =>
+                  m.id === messageId ? { ...m, content } : m,
+                ),
+                updatedAt: new Date(),
+              }
+            : c,
+        ),
+      );
+    },
+    [activeId],
+  );
+
   const removeMessage = useCallback(
     (messageId: string, conversationId?: string | null) => {
       const targetId = conversationId ?? activeId;
@@ -86,6 +153,26 @@ export function useChat() {
               }
             : c,
         ),
+      );
+    },
+    [activeId],
+  );
+
+  const removeMessagesAfter = useCallback(
+    (afterMessageId: string, conversationId?: string | null) => {
+      const targetId = conversationId ?? activeId;
+      if (!targetId) return;
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id !== targetId) return c;
+          const idx = c.messages.findIndex((m) => m.id === afterMessageId);
+          if (idx < 0) return c;
+          return {
+            ...c,
+            messages: c.messages.slice(0, idx + 1),
+            updatedAt: new Date(),
+          };
+        }),
       );
     },
     [activeId],
@@ -135,7 +222,9 @@ export function useChat() {
     setActiveId,
     startNewChat,
     addMessage,
+    updateMessage,
     removeMessage,
+    removeMessagesAfter,
     deleteConversation,
     renameConversation,
     toggleFavorite,

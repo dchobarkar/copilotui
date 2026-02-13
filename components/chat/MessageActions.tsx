@@ -1,4 +1,13 @@
-import { Copy, Check, RefreshCw, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
+import {
+  Copy,
+  Check,
+  RefreshCw,
+  ThumbsUp,
+  ThumbsDown,
+  Share2,
+  Trash2,
+  Pencil,
+} from "lucide-react";
 
 interface MessageActionsProps {
   onCopy?: () => void;
@@ -8,6 +17,8 @@ interface MessageActionsProps {
   onDislike?: () => void;
   feedback?: "like" | "dislike" | null;
   onShare?: () => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
   className?: string;
 }
 
@@ -19,6 +30,8 @@ export function MessageActions({
   onDislike,
   feedback = null,
   onShare,
+  onDelete,
+  onEdit,
   className = "",
 }: MessageActionsProps) {
   const btn =
@@ -79,13 +92,23 @@ export function MessageActions({
         </button>
       )}
       {onShare && (
+        <button type="button" onClick={onShare} className={btn} title="Share">
+          <Share2 className="w-3.5 h-3.5" />
+        </button>
+      )}
+      {onDelete && (
         <button
           type="button"
-          onClick={onShare}
+          onClick={onDelete}
           className={btn}
-          title="Share"
+          title="Delete"
         >
-          <Share2 className="w-3.5 h-3.5" />
+          <Trash2 className="w-3.5 h-3.5 hover:text-red-500" />
+        </button>
+      )}
+      {onEdit && (
+        <button type="button" onClick={onEdit} className={btn} title="Edit">
+          <Pencil className="w-3.5 h-3.5" />
         </button>
       )}
     </div>
