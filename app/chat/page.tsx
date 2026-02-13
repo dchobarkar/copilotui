@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { PanelLeft } from "lucide-react";
 
 import { useChat } from "@/hooks/useChat";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { getMockResponse } from "@/lib/mockResponses";
 import { Sidebar } from "@/components/chat/Sidebar";
 import { ChatBubble } from "@/components/chat/ChatBubble";
@@ -48,7 +49,13 @@ export default function ChatPage() {
     setSearchQuery,
   } = useChat();
 
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Mobile: sidebar collapsed by default; desktop/tablet: keep open
+  useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null,
   );
@@ -128,7 +135,7 @@ export default function ChatPage() {
         onNewChat={startNewChat}
         onSelectChat={(id) => {
           setActiveId(id);
-          setSidebarOpen(false);
+          if (isMobile) setSidebarOpen(false);
         }}
         onRename={renameConversation}
         onDelete={deleteConversation}
@@ -139,12 +146,13 @@ export default function ChatPage() {
       />
 
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Top bar - mobile sidebar toggle */}
+        {/* Top bar - expand button when sidebar is closed */}
         <header className="flex items-center gap-2 px-4 py-3 border-b border-stone-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm shrink-0">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
             className={`p-2 rounded-lg text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 ${!sidebarOpen ? "flex" : "hidden"}`}
+            title="Expand sidebar"
           >
             <PanelLeft className="w-5 h-5" />
           </button>

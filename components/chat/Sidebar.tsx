@@ -65,7 +65,8 @@ export function Sidebar({
           <button
             type="button"
             onClick={onToggle}
-            className="p-2 rounded-lg text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 md:hidden"
+            className="p-2 rounded-lg text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800"
+            title={isOpen ? "Collapse sidebar" : "Expand sidebar"}
           >
             {isOpen ? (
               <PanelLeftClose className="w-4 h-4" />
