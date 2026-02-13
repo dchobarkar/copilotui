@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import {
   Plus,
   Search,
@@ -8,13 +11,14 @@ import {
 } from "lucide-react";
 
 import { SidebarItem } from "./SidebarItem";
+import { SidebarUser } from "./SidebarUser";
 import type { Conversation } from "@/lib/types";
 
 interface SidebarProps {
   conversations: Conversation[];
   activeId: string | null;
   searchQuery: string;
-  onNewChat: () => void;
+  onNewChat: () => string;
   onSelectChat: (id: string) => void;
   onRename: (id: string, title: string) => void;
   onDelete: (id: string) => void;
@@ -37,8 +41,15 @@ export function Sidebar({
   isOpen,
   onToggle,
 }: SidebarProps) {
+  const router = useRouter();
   const favorites = conversations.filter((c) => c.isFavorite);
   const others = conversations.filter((c) => !c.isFavorite);
+
+  const handleNewChat = () => {
+    const newId = onNewChat();
+    router.push(`/chat/${newId}`);
+    onSelectChat(newId);
+  };
 
   return (
     <>
@@ -78,8 +89,9 @@ export function Sidebar({
 
         <button
           type="button"
-          onClick={onNewChat}
+          onClick={handleNewChat}
           className="flex items-center gap-2 mx-3 mt-3 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 dark:bg-violet-600/80 dark:hover:bg-violet-600 text-white text-sm font-medium transition-colors"
+          title="New chat (⌘⇧O)"
         >
           <Plus className="w-4 h-4" />
           New chat
@@ -113,7 +125,10 @@ export function Sidebar({
                     title={conv.title}
                     isActive={conv.id === activeId}
                     isFavorite={conv.isFavorite}
-                    onSelect={() => onSelectChat(conv.id)}
+                    onSelect={() => {
+                      router.push(`/chat/${conv.id}`);
+                      onSelectChat(conv.id);
+                    }}
                     onRename={onRename}
                     onDelete={onDelete}
                     onToggleFavorite={onToggleFavorite}
@@ -136,7 +151,10 @@ export function Sidebar({
                   title={conv.title}
                   isActive={conv.id === activeId}
                   isFavorite={conv.isFavorite}
-                  onSelect={() => onSelectChat(conv.id)}
+                    onSelect={() => {
+                      router.push(`/chat/${conv.id}`);
+                      onSelectChat(conv.id);
+                    }}
                   onRename={onRename}
                   onDelete={onDelete}
                   onToggleFavorite={onToggleFavorite}
@@ -151,6 +169,8 @@ export function Sidebar({
             </div>
           )}
         </div>
+
+        <SidebarUser />
       </aside>
     </>
   );
